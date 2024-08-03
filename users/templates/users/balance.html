@@ -1,0 +1,51 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+          Leave Balance
+        </div>
+        <div class="card-body">
+            <p><strong>Annual Leave:</strong> [##days]</p>
+            <p><strong>Sick Leave:</strong> [##days]</p>
+            <p><strong>Maternity Leave:</strong> [##days]</p>
+            <!-- Placeholder for pie chart/bar graph -->
+            <div id="leaveChart" class="my-4">
+                [pie chart/bar graph]
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+          Recent Leave Transactions
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Change</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-07-01</td>
+                        <td>Sick Leave</td>
+                        <td>-2 days</td>
+                        <td>18 days</td>
+                    </tr>
+                    <tr>
+                        <td>2024-06-15</td>
+                        <td>Annual Leave</td>
+                        <td>-5 days</td>
+                        <td>15 days</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

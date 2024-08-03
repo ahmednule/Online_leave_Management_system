@@ -1,0 +1,52 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="container">
+    <div class="card mt-4">
+        <div class="card-header">
+            Notifications
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Your leave request has been approved</td>
+                    <td>2024-07-21</td>
+                    <td>
+                        <span class="badge bg-danger">Unread</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Mark as Read</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Your leave request has been rejected</td>
+                    <td>2024-07-19</td>
+                    <td>
+                        <span class="badge bg-success">Read</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary">Mark as Unread</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Upcoming company holiday on Aug 15</td>
+                    <td>2024-07-15</td>
+                    <td>
+                        <span class="badge bg-danger">Unread</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Mark as Read</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

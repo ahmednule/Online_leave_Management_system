@@ -1,0 +1,37 @@
+{% extends "users/base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <div class="dropdown mt-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+          Leave Type
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#" data-value="Sick Leave">Sick Leave</a></li>
+          <li><a class="dropdown-item" href="#" data-value="AnnualLeave">Annual leave</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Maternity Leave">Maternity Leave</a></li>
+          <li><a class="dropdown-item" href="#" data-value="Paternity Leave">Paternity Leave</a></li>
+
+        </ul>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label for="startDate" class="form-label">Start Date and Time</label>
+          <input type="datetime-local" id="startDate" name="startDate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="endDate" class="form-label">End Date and Time</label>
+          <input type="datetime-local" id="endDate" name="endDate" class="form-control">
+        </div>
+      </div>
+      <form>
+        <div class="mb-3">
+          <label for="message" class="form-label">Message:</label>
+          <textarea id="message" name="message" class="form-control" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-danger ms-4" aria-label="Cancel">Cancel</button>
+
+      </form>
+       
+</div>
+{% endblock %}
