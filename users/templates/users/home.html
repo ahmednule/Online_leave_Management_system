@@ -3,8 +3,43 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h1>Welcome to the Home Page</h1>
+            <h2 class="text-left mt-3">Welcome User</h2>
+            <div class="d-flex justify-content-center mt-3">
+                <a href="/apply" class="btn btn-primary me-2">Apply Leave</a>
+                <a href="/balance" class="btn btn-secondary me-2">View Leave Balance</a>
+                <a href="/notifications" class="btn btn-info me-2">View Notifications</a>
+                <a href="/" class="btn btn-success">Recent Leave Applications</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mt-6">
+        <div class="col-md-12">
+            <h4 class="mt-5">Leave Summary</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Leave Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for leave_type in leave_type %}
+                        <tr>
+                            <td>{{ leave_type.name }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+            </table>
         </div>
     </div>
 </div>
-{% endblock%}
+<style>
+    footer{
+        position:absolute;
+        bottom:0;
+    }
+</style>
+{% endblock%} 

@@ -1,8 +1,10 @@
 from django.shortcuts import render
 # from django.contrib.auth.forms import UserCreationForm
+from .models import LeaveType, LeaveApplication
 
 def home(request):
-    return render(request, 'users/home.html')
+    leave_types = LeaveType.objects.all()
+    return render(request, 'users/home.html',{'leave_types': leave_types} )
 
 # def register(request):
 #     form = UserCreationForm()
