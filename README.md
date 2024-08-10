@@ -43,7 +43,7 @@ Open your terminal and run the following command to clone the repository:
 
 ```bash
 git clone https://github.com/ahmednule/Online_leave_Management_system.git
-cd online-leave-management-system
+cd Online-leave-management-system
 ```
 
 ### Step 2: Set Up a Virtual Environment
