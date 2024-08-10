@@ -25,7 +25,8 @@ class LeaveApplication(models.Model):
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
-    status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Approved', 'Approved'), ('Rejected', 'Rejected')])
+    message = models.TextField(default='')
+    status = models.CharField(max_length=50, default='Pending')
 
     def __str__(self):
         return f"{self.user.username} - {self.leave_type.name}"

@@ -9,35 +9,36 @@
         <div class="card-body">
             <!-- Personal Information Section -->
             <h5 class="card-title">Personal Information</h5>
-            <form>
+            <form method="post" action="{% url 'update_profile' %}">
+                {% csrf_token %}
                 <div class="mb-3 row">
                     <label for="firstName" class="col-sm-2 col-form-label">First Name:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="firstName" placeholder="Enter your first name">
+                        <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name }}" placeholder="Enter your first name">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="lastName" class="col-sm-2 col-form-label">Last Name:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="lastName" placeholder="Enter your last name">
+                        <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name }}" placeholder="Enter your last name">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="email" class="col-sm-2 col-form-label">Email:</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" placeholder="Enter your email">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="role" class="col-sm-2 col-form-label">Role:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="role" placeholder="Enter your role">
+                        <input type="text" class="form-control" id="role" name="role" value="{{ profile.role }}" placeholder="Enter your role">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="department" class="col-sm-2 col-form-label">Department:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="department" placeholder="Enter your department">
+                        <input type="text" class="form-control" id="department" name="department" value="{{ profile.department }}" placeholder="Enter your department">
                     </div>
                 </div>
                 <div class="text-center">
@@ -53,17 +54,18 @@
             Contact Information
         </div>
         <div class="card-body">
-            <form>
+            <form method="post" action="{% url 'update_contact' %}">
+                {% csrf_token %}
                 <div class="mb-3 row">
                     <label for="phoneNumber" class="col-sm-2 col-form-label">Phone Number:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="phoneNumber" placeholder="Enter your phone number">
+                        <input type="text" class="form-control" id="phoneNumber" name="phone_number" value="{{ profile.phone_number }}" placeholder="Enter your phone number">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="address" class="col-sm-2 col-form-label">Address:</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address" placeholder="Enter your address">
+                        <input type="text" class="form-control" id="address" name="address" value="{{ profile.address }}" placeholder="Enter your address">
                     </div>
                 </div>
                 <div class="text-center">
@@ -79,23 +81,24 @@
             Change Password
         </div>
         <div class="card-body">
-            <form>
+            <form method="post" action="{% url 'change_password' %}">
+                {% csrf_token %}
                 <div class="mb-3 row">
                     <label for="currentPassword" class="col-sm-2 col-form-label">Current Password:</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter your current password">
+                        <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Enter your current password">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="newPassword" class="col-sm-2 col-form-label">New Password:</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="newPassword" placeholder="Enter your new password">
+                        <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="Enter your new password">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="confirmPassword" class="col-sm-2 col-form-label">Confirm Password:</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm your new password">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm your new password">
                     </div>
                 </div>
                 <div class="text-center">

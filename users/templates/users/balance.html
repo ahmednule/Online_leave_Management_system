@@ -6,12 +6,13 @@
           Leave Balance
         </div>
         <div class="card-body">
-            <p><strong>Annual Leave:</strong> [##days]</p>
-            <p><strong>Sick Leave:</strong> [##days]</p>
-            <p><strong>Maternity Leave:</strong> [##days]</p>
+            <p><strong>Annual Leave:</strong> {{ leave_balance.annual_leave }} days</p>
+            <p><strong>Sick Leave:</strong> {{ leave_balance.sick_leave }} days</p>
+            <p><strong>Other Leave:</strong> {{ leave_balance.other_leave }} days</p>
+
             <!-- Placeholder for pie chart/bar graph -->
             <div id="leaveChart" class="my-4">
-                [pie chart/bar graph]
+                <canvas id="leaveChartCanvas"></canvas>
             </div>
         </div>
     </div>
@@ -26,26 +27,50 @@
                     <tr>
                         <th>Date</th>
                         <th>Type</th>
-                        <th>Change</th>
-                        <th>Balance</th>
+                        <th>Date</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for leave in recent_leaves %}
                     <tr>
-                        <td>2024-07-01</td>
-                        <td>Sick Leave</td>
-                        <td>-2 days</td>
-                        <td>18 days</td>
+                        <td>{{ leave.start_date }}</td>
+                        <td>{{ leave.leave_type.name }}</td>
+                        <td>{{ leave.end_date|date:"Y-m-d" }}</td>
+                        <td>{{ leave.status }}</td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td>2024-06-15</td>
-                        <td>Annual Leave</td>
-                        <td>-5 days</td>
-                        <td>15 days</td>
+                        <td colspan="4">No recent leave transactions.</td>
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Include Chart.js for the pie chart -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('leaveChartCanvas').getContext('2d');
+    var leaveChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Annual Leave', 'Sick Leave', 'Other Leave'],
+            datasets: [{
+                data: [
+                    {{ leave_balance.annual_leave }},
+                    {{ leave_balance.sick_leave }},
+                    {{ leave_balance.other_leave }}
+                ],
+                backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+        }
+    });
+</script>
 {% endblock %}

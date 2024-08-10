@@ -15,36 +15,36 @@
                 </tr>
             </thead>
             <tbody>
+                {% for notification in notifications %}
                 <tr>
-                    <td>Your leave request has been approved</td>
-                    <td>2024-07-21</td>
+                    <td>{{ notification.message }}</td>
+                    <td>{{ notification.timestamp|date:"Y-m-d" }}</td>
                     <td>
-                        <span class="badge bg-danger">Unread</span>
+                        {% if not notification.is_read %}
+                            <span class="badge bg-danger">Unread</span>
+                        {% else %}
+                            <span class="badge bg-success">Read</span>
+                        {% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary">Mark as Read</button>
+                        {% if not notification.is_read %}
+                            <form method="post" action="{% url 'mark_as_read' notification.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-primary" type="submit">Mark as Read</button>
+                            </form>
+                        {% else %}
+                            <form method="post" action="{% url 'mark_as_unread' notification.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-secondary" type="submit">Mark as Unread</button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
+                {% empty %}
                 <tr>
-                    <td>Your leave request has been rejected</td>
-                    <td>2024-07-19</td>
-                    <td>
-                        <span class="badge bg-success">Read</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary">Mark as Unread</button>
-                    </td>
+                    <td colspan="4">No notifications available.</td>
                 </tr>
-                <tr>
-                    <td>Upcoming company holiday on Aug 15</td>
-                    <td>2024-07-15</td>
-                    <td>
-                        <span class="badge bg-danger">Unread</span>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Mark as Read</button>
-                    </td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
