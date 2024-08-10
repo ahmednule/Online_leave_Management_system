@@ -82,12 +82,7 @@ python manage.py migrate
 
 ### Step 5: Load Initial Data (Optional)
 
-If you want to prepopulate the database with existing user data, run:
-
-```bash
-python manage.py loaddata users_all_fixture.json
-```
-
+```skip this process for now```
 ### Step 6: Create a Superuser (Optional)
 
 To create an admin user with full access, run:
