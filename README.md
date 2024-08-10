@@ -123,7 +123,3 @@ For any inquiries or support, please reach out to **Judy Auma** at [judyauma@gma
 ## License
 
 This project is licensed under the **Nairobi Technical Training Institute**.
-
----
-
-This version is structured for clarity, making it easier for non-technical users to follow along. It includes a table of contents for quick navigation and simplifies the installation process with clear steps.
