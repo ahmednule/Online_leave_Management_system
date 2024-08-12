@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
             <div class="card shadow-sm">
-                <div class="card-header text-center bg-primary text-white">
-                    <h4 class="mb-0">Login</h4>
+                <div class="card-header text-center" style="background-color: #5F9596; color: #ffe599;">
+                    <h4 class="mb-2">Login</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="background-color:#5F9596; color:white;">
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
                             {% for error in form.non_field_errors %}
@@ -53,6 +53,7 @@
 </div>
 <style>
     footer {
+        
         margin-left: 0;
         position:fixed;
         bottom: 0;
