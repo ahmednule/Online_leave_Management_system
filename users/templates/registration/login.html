@@ -1,64 +1,59 @@
 {% extends "users/base.html" %}
 
-{% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm">
-                <div class="card-header text-center" style="background-color: #5F9596; color: #ffe599;">
-                    <h4 class="mb-2">Login</h4>
+{% block login_content %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-sm w-100" style="max-width: 400px;">
+        <div class="card-header text-center" style="background-color: #343a40; color: #f8f9fa;">
+            <h4 class="mb-2">Welcome Home</h4>
+        </div>
+        <div class="card-body" style="background-color: #ffffff; color: #343a40;">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
                 </div>
-                <div class="card-body" style="background-color:#5F9596; color:white;">
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {% for error in form.non_field_errors %}
+            {% endif %}
+            <form method="post" class="w-100">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label text-dark">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.username.errors %}
                                 <div>{{ error }}</div>
                             {% endfor %}
                         </div>
                     {% endif %}
-                    
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
-                            {{ form.username }}
-                            {% if form.username.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.username.errors %}
-                                        <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="mb-3">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                            {{ form.password }}
-                            {% if form.password.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.password.errors %}
-                                        <div>{{ error }}</div>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                            <a href="#" class="text-muted">Forgot Password?</a>
-                        </div>
-                    </form>
                 </div>
-            </div>
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label text-dark">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.password.errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <button type="submit" class="btn btn-dark" style="background-color: #343a40; color: #f8f9fa;">Login</button>
+                    <a href="#" class="text-dark">Forgot Password?</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 <style>
-    footer {
-        
-        margin-left: 0;
-        position:fixed;
-        bottom: 0;
+    .vh-100 {
+        min-height: 100vh;
+    }
+    .card {
         width: 100%;
+        max-width: 400px;
     }
 </style>
 {% endblock %}
-
