@@ -28,6 +28,9 @@ DEBUG = True
 ALLOWED_HOSTS = ['online-leave-management-system-33o5.onrender.com', 'localhost', '127.0.0.1']
 
 
+CSRF_TRUSTED_ORIGINS = ['https://online-leave-management-system-33o5.onrender.com']
+
+
 # Application definition
 
 INSTALLED_APPS = [
