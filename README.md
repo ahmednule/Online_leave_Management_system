@@ -117,4 +117,4 @@ For any inquiries or support, please reach out to **Judy Auma** at [judyauma@gma
 
 ## License
 
-This project is licensed under the **Nairobi Technical Training Institute**.
+This project is licensed under the **Nairobi Technical Training Institute for Nancy Maina**.
