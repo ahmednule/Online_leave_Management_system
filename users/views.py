@@ -5,17 +5,17 @@ from django.contrib.auth import update_session_auth_hash, logout
 from django.contrib import messages
 from django.urls import reverse
 from django.http import Http404
-from .models import LeaveType, LeaveApplication, Notification, LeaveBalance, Profile
+from .models import LeaveType, LeaveApplication, Notification, LeaveBalance, Profile, Notice,Awards
 from .forms import ProfileForm, ContactForm
 
 @login_required
 def home(request):
-    # Fetch recent leave applications for the current user
-    leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
+    notice=Notice.objects.all()
+    awards=Awards.objects.all()
 
     return render(request, 'users/home.html', {
-        'user': request.user,
-        'leave_applications': leave_applications
+        'notice': notice,
+        'awards': awards
     })
 
 @login_required

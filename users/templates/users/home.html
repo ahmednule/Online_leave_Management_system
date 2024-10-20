@@ -32,32 +32,32 @@
                 </div>
             </div>
         </div>
+        {% for awards in awards %}
         <div class="col-4">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Awards</h5>
-                    <p class="card-text">0</p>
+                    <p class="card-text">{{awards.award}}</p>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
     <div class="row mt-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Notice Board <a href="#" class="float-end">View all</a></h5>
+                    {% for notice in notice %}
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td>[Month]<br>[date]</td>
-                                <td>[e.g. VACANCY]<br>[e.g. vacancy announcement]</td>
-                            </tr>
-                            <tr>
-                                <td>[Month]<br>[date]</td>
-                                <td>[e.g., Thanksgiving day]<br>[e.g., Please do not miss the thanksgiving day]</td>
+                                <td>{{notice.month}}<br>{{notice.date}}</td>
+                                <td>{{notice.vacancy}}<br>{{notice.announcements}}</td>
                             </tr>
                         </tbody>
                     </table>
+                    {% endfor %}
                 </div>
             </div>
         </div>

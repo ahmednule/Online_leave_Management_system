@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, LeaveApplication, LeaveBalance, Notification, LeaveType, Profile
+from .models import User, LeaveApplication, LeaveBalance, Notification, LeaveType, Profile, Awards,Notice
 
 class UserAdmin(BaseUserAdmin):
-    # Customize User admin interface if needed
     list_display = ('username', 'email', 'is_staff', 'is_superuser')
     search_fields = ('username', 'email')
     ordering = ('username',)
@@ -54,3 +53,5 @@ admin.site.register(LeaveApplication, LeaveApplicationAdmin)
 admin.site.register(LeaveBalance, LeaveBalanceAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(LeaveType, LeaveTypeAdmin)
+admin.site.register(Awards)
+admin.site.register(Notice)

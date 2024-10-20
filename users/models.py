@@ -63,4 +63,15 @@ class Profile(models.Model):
         return f"Profile of {self.user.username}"
     
 class Notice(models.Model):
+    vacancy = models.CharField(max_length=50)
+    date=models.DateField()
+    month=models.CharField(max_length=50)
+    announcements=models.TextField()
+    def __str__(self):
+        return self.vacancy
     
+class Awards(models.Model):
+    award=models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.award
