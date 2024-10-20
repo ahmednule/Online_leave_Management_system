@@ -47,8 +47,13 @@ def apply(request):
 
 @login_required
 def notification(request):
-    notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
-    return render(request, 'users/notification.html', {'notifications': notifications})
+    # notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
+    leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
+    return render(request, 'users/notification.html', {
+        'user': request.user,
+        'leave_applications': leave_applications
+    })
+
 
 @login_required
 def profile(request):
