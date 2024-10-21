@@ -2,22 +2,24 @@
 
 {% block login_content %}
 <div class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow-sm w-100" style="max-width: 400px;">
-        <div class="card-header text-center" style="background-color: #343a40; color: #f8f9fa;">
-            <h4 class="mb-2">Welcome Home</h4>
+    <div class="card shadow-lg rounded-4 w-100 p-4" style="max-width: 400px;">
+        <div class="card-header text-center py-3 header">
+            <h4 class="mb-0"> <i>Empoworx Employee System</i></h4>
         </div>
-        <div class="card-body" style="background-color: #ffffff; color: #343a40;">
+
+        <div class="card-body py-4 px-5 body">
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
+                <div class="alert alert-danger mb-3">
                     {% for error in form.non_field_errors %}
                         <div>{{ error }}</div>
                     {% endfor %}
                 </div>
             {% endif %}
+
             <form method="post" class="w-100">
                 {% csrf_token %}
-                <div class="mb-3">
-                    <label for="{{ form.username.id_for_label }}" class="form-label text-dark">Username</label>
+                <div class="mb-4">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
                     {{ form.username }}
                     {% if form.username.errors %}
                         <div class="invalid-feedback d-block">
@@ -27,8 +29,9 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="mb-3">
-                    <label for="{{ form.password.id_for_label }}" class="form-label text-dark">Password</label>
+
+                <div class="mb-4">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
                     {{ form.password }}
                     {% if form.password.errors %}
                         <div class="invalid-feedback d-block">
@@ -38,22 +41,99 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <button type="submit" class="btn btn-dark" style="background-color: #343a40; color: #f8f9fa;">Login</button>
-                    <a href="#" class="text-dark">Forgot Password?</a>
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <button type="submit" class="btn btn-dark btn-custom">Login</button>
+                    <a href="#" class="forgot-password-link">Forgot Password?</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- Fonts from Google -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
+    /* General Styles */
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    h1.title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
+        color: #343a40;
+    }
+
+    .header {
+        background-color: #212529;
+        color: #f8f9fa;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .card {
+        max-width: 400px;
+        border: none;
+        border-radius: 12px;
+    }
+
+    .form-label {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+    }
+
+    input {
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 1rem;
+        transition: box-shadow 0.3s, border-color 0.3s;
+    }
+
+    input:focus {
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+        border-color: #007bff;
+    }
+
+    .btn-custom {
+        padding: 12px 24px;
+        background-color: #343a40;
+        color: #f8f9fa;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-custom:hover {
+        background-color: #495057;
+        transform: scale(1.05);
+    }
+
+    .forgot-password-link {
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
+
+    .forgot-password-link:hover {
+        color: #007bff;
+    }
+
     .vh-100 {
         min-height: 100vh;
     }
-    .card {
-        width: 100%;
-        max-width: 400px;
+
+    /* Responsive Styles */
+    @media (max-width: 576px) {
+        h1.title {
+            font-size: 1.5rem;
+        }
+
+        .card {
+            padding: 2rem;
+        }
     }
 </style>
 {% endblock %}
