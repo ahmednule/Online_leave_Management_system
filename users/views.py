@@ -10,12 +10,15 @@ from .forms import ProfileForm, ContactForm
 
 @login_required
 def home(request):
+    leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
     notice=Notice.objects.all()
     awards=Awards.objects.all()
+    leave_applications=LeaveApplication.objects.all()
 
     return render(request, 'users/home.html', {
         'notice': notice,
-        'awards': awards
+        'awards': awards,
+        'leave_applications': leave_applications,
     })
 
 @login_required
@@ -26,17 +29,15 @@ def apply(request):
         end_date = request.POST.get('endDate')
         message = request.POST.get('message')
 
-        # Fetch the LeaveType instance based on the name
         leave_type = get_object_or_404(LeaveType, name=leave_type_name)
 
-        # Save the leave application to the database
         LeaveApplication.objects.create(
             user=request.user,
-            leave_type=leave_type,  # Use the LeaveType instance here
+            leave_type=leave_type, 
             start_date=start_date,
             end_date=end_date,
             message=message,
-            status='Pending'  # Assuming the default status is 'Pending'
+            status='Pending'  
         )
 
         messages.success(request, 'Leave application submitted successfully.')
@@ -47,7 +48,6 @@ def apply(request):
 
 @login_required
 def notification(request):
-    # notifications = Notification.objects.filter(user=request.user).order_by('-timestamp')
     leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
     return render(request, 'users/notification.html', {
         'user': request.user,
@@ -59,7 +59,6 @@ def notification(request):
 def profile(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
-    # Handle profile form submission
     if request.method == 'POST' and 'update_profile' in request.POST:
         profile_form = ProfileForm(request.POST, instance=profile)
         if profile_form.is_valid():
@@ -71,7 +70,6 @@ def profile(request):
     else:
         profile_form = ProfileForm(instance=profile)
 
-    # Handle contact form submission
     if request.method == 'POST' and 'update_contact' in request.POST:
         contact_form = ContactForm(request.POST, instance=profile)
         if contact_form.is_valid():

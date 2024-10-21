@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, LeaveApplication, LeaveBalance, Notification, LeaveType, Profile, Awards,Notice
+from .models import User, LeaveApplication, LeaveBalance, Notification, LeaveType, Profile, Awards,Notice, Employee_Details
 
 class UserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'is_staff', 'is_superuser')
@@ -55,3 +55,4 @@ admin.site.register(Notification, NotificationAdmin)
 admin.site.register(LeaveType, LeaveTypeAdmin)
 admin.site.register(Awards)
 admin.site.register(Notice)
+admin.site.register(Employee_Details)
