@@ -1,5 +1,3 @@
-Here's an improved version of your README.md file, designed to be more user-friendly and accessible for non-technical users:
-
 ---
 
 # Online Leave Management System
