@@ -101,6 +101,7 @@ python manage.py runserver
 
 Open your web browser and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to access the application.
 
+## create an admin using django-admin createsuperuser then add a user since the project was nor meant to be a standalone web app.
 ## Usage
 
 Once the application is running, you can log in, apply for leave, check your balances, and manage notifications. Admin users can access the admin interface to manage users and leave types.
@@ -111,8 +112,4 @@ We welcome contributions! Feel free to fork this project and submit pull request
 
 ## Contact
 
-For any inquiries or support, please reach out to **Judy Auma** at [judyauma@gmail.com](mailto:judyauma@gmail.com).
-
-## License
-
-This project is licensed under the **Nairobi Technical Training Institute**.
+For any inquiries or support, please reach out to **Judy Auma** at [itsahmednule@gmail.com](mailto: itsahmednule@gmail.com).
