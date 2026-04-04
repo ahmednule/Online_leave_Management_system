@@ -1,110 +1,96 @@
 {% extends "users/base.html" %}
+{% block title %}Profile - Leave Management System{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <!-- Profile Card -->
-    <div class="card mb-4">
-        <div class="card-header">
-            Profile
-        </div>
-        <div class="card-body">
-            <!-- Personal Information Section -->
-            <h5 class="card-title">Personal Information</h5>
-            <form method="post" action="{% url 'update_profile' %}">
-                {% csrf_token %}
-                <div class="mb-3 row">
-                    <label for="firstName" class="col-sm-2 col-form-label">First Name:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name }}" placeholder="Enter your first name">
+<div class="page-header">
+    <h2>My Profile</h2>
+    <p class="mb-0">Manage your personal information and account settings.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-person-badge me-2"></i>Personal Information
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="{% url 'update_profile' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" value="{{ user.first_name }}" disabled>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="lastName" class="col-sm-2 col-form-label">Last Name:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name }}" placeholder="Enter your last name">
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" value="{{ user.last_name }}" disabled>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="email" class="col-sm-2 col-form-label">Email:</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" placeholder="Enter your email">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" value="{{ user.email }}" disabled>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="role" class="col-sm-2 col-form-label">Role:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="role" name="role" value="{{ profile.role }}" placeholder="Enter your role">
+                    <hr>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <input type="text" class="form-control" id="role" name="role" value="{{ profile_form.role.value|default:profile.role }}" placeholder="e.g. Software Engineer">
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="department" class="col-sm-2 col-form-label">Department:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="department" name="department" value="{{ profile.department }}" placeholder="Enter your department">
+                    <div class="mb-3">
+                        <label for="department" class="form-label">Department</label>
+                        <input type="text" class="form-control" id="department" name="department" value="{{ profile_form.department.value|default:profile.department }}" placeholder="e.g. Engineering">
                     </div>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                    <button type="submit" name="update_profile" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Save Changes
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Contact Information Card -->
-    <div class="card mb-4">
-        <div class="card-header">
-            Contact Information
-        </div>
-        <div class="card-body">
-            <form method="post" action="{% url 'update_contact' %}">
-                {% csrf_token %}
-                <div class="mb-3 row">
-                    <label for="phoneNumber" class="col-sm-2 col-form-label">Phone Number:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="phoneNumber" name="phone_number" value="{{ profile.phone_number }}" placeholder="Enter your phone number">
+    <div class="col-lg-6">
+        <div class="card h-100 mb-4">
+            <div class="card-header">
+                <i class="bi bi-telephone me-2"></i>Contact Information
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="{% url 'update_contact' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phoneNumber" name="phone_number" value="{{ profile.phone_number|default:'' }}" placeholder="e.g. +1 234 567 8900">
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="address" class="col-sm-2 col-form-label">Address:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="address" name="address" value="{{ profile.address }}" placeholder="Enter your address">
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter your full address">{{ profile.address|default:'' }}</textarea>
                     </div>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                </div>
-            </form>
+                    <button type="submit" name="update_contact" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>Update Contact Info
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Change Password Card -->
-    <div class="card">
-        <div class="card-header">
-            Change Password
-        </div>
-        <div class="card-body">
-            <form method="post" action="{% url 'change_password' %}">
-                {% csrf_token %}
-                <div class="mb-3 row">
-                    <label for="currentPassword" class="col-sm-2 col-form-label">Current Password:</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="currentPassword" name="current_password" placeholder="Enter your current password">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-lock me-2"></i>Change Password
+            </div>
+            <div class="card-body p-4">
+                <form method="post" action="{% url 'change_password' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="old_password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="old_password" name="old_password" required>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="newPassword" class="col-sm-2 col-form-label">New Password:</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="newPassword" name="new_password" placeholder="Enter your new password">
+                    <div class="mb-3">
+                        <label for="new_password1" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password1" name="new_password1" required>
                     </div>
-                </div>
-                <div class="mb-3 row">
-                    <label for="confirmPassword" class="col-sm-2 col-form-label">Confirm Password:</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Confirm your new password">
+                    <div class="mb-3">
+                        <label for="new_password2" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="new_password2" name="new_password2" required>
                     </div>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Change Password</button>
-                </div>
-            </form>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-key me-1"></i>Change Password
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

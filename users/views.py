@@ -13,11 +13,15 @@ def home(request):
     leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
     notice = Notice.objects.all()
     awards = Awards.objects.all()
+    pending_count = leave_applications.filter(status='Pending').count()
+    approved_count = leave_applications.filter(status='Approved').count()
 
     return render(request, 'users/home.html', {
         'notice': notice,
         'awards': awards,
         'leave_applications': leave_applications,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
     })
 
 @login_required
@@ -182,6 +186,6 @@ def admin_view_leaves(request):
 def user_logout(request):
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return render(request, 'users/logout.html')
+    return redirect('login')
 
 

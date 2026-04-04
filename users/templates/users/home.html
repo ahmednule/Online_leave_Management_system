@@ -1,66 +1,167 @@
 {% extends "users/base.html" %}
+{% block title %}Dashboard - Leave Management System{% endblock %}
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="text-center m-3">Empoworx Employee System</h1>
-        </div>
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h2>Welcome, {{ user.first_name|default:user.username }}!</h2>
+        <p class="mb-0">Here's an overview of your leave status and announcements.</p>
     </div>
-    <div class="row">
-        <div class="col-12">
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-12">
-            <h2>Welcome  {{ user.first_name }} {{ user.last_name }}!</h2>
-        </div>
-    </div>
-    <div class="row mt-3">
-        <div class="col-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Attendance</h5>
-                    <p class="card-text">Coming Soon</p>
+    <a href="{% url 'apply' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i>New Leave Request
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Total Leave Taken</p>
+                        <p class="stat-value mb-0">{{ leave_applications|length }}</p>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-calendar-event text-primary fs-5"></i>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Leave</h5>
-                    <p class="card-text">coming soon</p>
-                </div>
-            </div>
-        </div>
-        {% for awards in awards %}
-        <div class="col-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Awards</h5>
-                    <p class="card-text">{{awards.award}}</p>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
     </div>
-    <div class="row mt-3">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Notice Board <a href="#" class="float-end">View all</a></h5>
-                    {% for notice in notice %}
-                    <table class="table">
-                        <tbody>
+    <div class="col-md-4">
+        <div class="card stat-card warning h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Pending Requests</p>
+                        <p class="stat-value mb-0">{{ pending_count }}</p>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-hourglass-split text-warning fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card success h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Approved Leaves</p>
+                        <p class="stat-value mb-0">{{ approved_count }}</p>
+                    </div>
+                    <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                        <i class="bi bi-check-circle text-success fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-clock-history me-2"></i>Recent Leave Applications</span>
+                <a href="{% url 'notifications' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body p-0">
+                {% if leave_applications %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
                             <tr>
-                                <td>{{notice.month}}<br>{{notice.date}}</td>
-                                <td>{{notice.vacancy}}<br>{{notice.announcements}}</td>
+                                <th>Leave Type</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Status</th>
                             </tr>
+                        </thead>
+                        <tbody>
+                            {% for leave in leave_applications|slice:":5" %}
+                            <tr>
+                                <td class="fw-500">{{ leave.leave_type.name }}</td>
+                                <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                                <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if leave.status == 'Approved' %}
+                                        <span class="badge badge-approved px-3 py-2 rounded-pill">Approved</span>
+                                    {% elif leave.status == 'Rejected' %}
+                                        <span class="badge badge-rejected px-3 py-2 rounded-pill">Rejected</span>
+                                    {% else %}
+                                        <span class="badge badge-pending px-3 py-2 rounded-pill">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-secondary">
+                    <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+                    <p class="mb-0">No leave applications yet.</p>
+                    <a href="{% url 'apply' %}" class="btn btn-sm btn-outline-primary mt-3">Apply for Leave</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-megaphone me-2"></i>Notice Board
+            </div>
+            <div class="card-body">
+                {% if notice %}
+                    {% for n in notice|slice:":4" %}
+                    <div class="d-flex gap-3 mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+                        <div class="bg-primary bg-opacity-10 rounded p-2 text-center" style="min-width: 50px;">
+                            <div class="fw-700 text-primary" style="font-size: 0.75rem;">{{ n.month|slice:":3" }}</div>
+                            <div class="fw-700 text-primary">{{ n.date|date:"d" }}</div>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-600">{{ n.vacancy }}</h6>
+                            <p class="mb-0 text-secondary" style="font-size: 0.8rem;">{{ n.announcements|truncatechars:80 }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4 text-secondary">
+                        <i class="bi bi-clipboard fs-4 d-block mb-2"></i>
+                        <p class="mb-0" style="font-size: 0.85rem;">No notices available.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if awards %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-trophy me-2"></i>Awards & Recognition
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    {% for award in awards %}
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center gap-3 p-3 bg-light rounded">
+                            <div class="bg-warning bg-opacity-10 rounded-circle p-2">
+                                <i class="bi bi-award text-warning"></i>
+                            </div>
+                            <span class="fw-500">{{ award.award }}</span>
+                        </div>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

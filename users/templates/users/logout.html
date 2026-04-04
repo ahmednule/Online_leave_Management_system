@@ -1,14 +1,25 @@
 {% extends "users/base.html" %}
+{% block title %}Logged Out - Leave Management System{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <div class="alert alert-success" role="alert">
-        You have been logged out successfully.
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card text-center">
+            <div class="card-body p-5">
+                <div class="bg-success bg-opacity-10 rounded-circle p-4 d-inline-block mb-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h3 class="fw-700 mb-2">You've Been Logged Out</h3>
+                <p class="text-secondary mb-4">Thank you for using the Leave Management System. We hope to see you again soon!</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'login' %}" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Log In Again
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-1"></i>Home
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
-    {% comment %} <a href="{% url 'login' %}" class="btn btn-primary">Log In </a> {% endcomment %}
 </div>
-<style>
-    footer {
-        position: absolute;
-        bottom: 0;
-    }
 {% endblock %}

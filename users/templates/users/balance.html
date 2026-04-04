@@ -1,61 +1,119 @@
 {% extends "users/base.html" %}
+{% block title %}Leave Balance - Leave Management System{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-          Leave Balance
-        </div>
-        <div class="card-body">
-            <p><strong>Annual Leave:</strong> {{ leave_balance.annual_leave }} days</p>
-            <p><strong>Sick Leave:</strong> {{ leave_balance.sick_leave }} days</p>
-            <p><strong>Other Leave:</strong> {{ leave_balance.other_leave }} days</p>
+<div class="page-header">
+    <h2>Leave Balance</h2>
+    <p class="mb-0">View your remaining leave days and recent transactions.</p>
+</div>
 
-            <!-- Placeholder for pie chart/bar graph -->
-            <div id="leaveChart" class="my-4">
-                <canvas id="leaveChartCanvas"></canvas>
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body text-center p-4">
+                <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-sun text-primary fs-4"></i>
+                </div>
+                <p class="stat-label mb-2">Annual Leave</p>
+                <p class="stat-value mb-0">{{ leave_balance.annual_leave }}</p>
+                <p class="text-secondary mb-0" style="font-size: 0.8rem;">days remaining</p>
             </div>
         </div>
     </div>
-
-    <div class="card mt-4">
-        <div class="card-header">
-          Recent Leave Transactions
+    <div class="col-md-4">
+        <div class="card stat-card danger h-100">
+            <div class="card-body text-center p-4">
+                <div class="bg-danger bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-heart-pulse text-danger fs-4"></i>
+                </div>
+                <p class="stat-label mb-2">Sick Leave</p>
+                <p class="stat-value mb-0">{{ leave_balance.sick_leave }}</p>
+                <p class="text-secondary mb-0" style="font-size: 0.8rem;">days remaining</p>
+            </div>
         </div>
-        <div class="card-body">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for leave in recent_leaves %}
-                    <tr>
-                        <td>{{ leave.start_date }}</td>
-                        <td>{{ leave.leave_type.name }}</td>
-                        <td>{{ leave.end_date|date:"Y-m-d" }}</td>
-                        <td>{{ leave.status }}</td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4">No recent leave transactions.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card success h-100">
+            <div class="card-body text-center p-4">
+                <div class="bg-success bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                    <i class="bi bi-calendar-check text-success fs-4"></i>
+                </div>
+                <p class="stat-label mb-2">Other Leave</p>
+                <p class="stat-value mb-0">{{ leave_balance.other_leave }}</p>
+                <p class="text-secondary mb-0" style="font-size: 0.8rem;">days remaining</p>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Include Chart.js for the pie chart -->
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-pie-chart me-2"></i>Leave Distribution
+            </div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 280px;">
+                <div style="width: 100%; max-width: 260px;">
+                    <canvas id="leaveChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-header">
+                <i class="bi bi-clock-history me-2"></i>Recent Leave Transactions
+            </div>
+            <div class="card-body p-0">
+                {% if recent_leaves %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leave in recent_leaves %}
+                            <tr>
+                                <td class="fw-500">{{ leave.leave_type.name }}</td>
+                                <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                                <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                                <td>
+                                    {% if leave.status == 'Approved' %}
+                                        <span class="badge badge-approved px-3 py-2 rounded-pill">Approved</span>
+                                    {% elif leave.status == 'Rejected' %}
+                                        <span class="badge badge-rejected px-3 py-2 rounded-pill">Rejected</span>
+                                    {% else %}
+                                        <span class="badge badge-pending px-3 py-2 rounded-pill">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-secondary">
+                    <i class="bi bi-inbox fs-1 d-block mb-3"></i>
+                    <p class="mb-0">No leave transactions yet.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('leaveChartCanvas').getContext('2d');
-    var leaveChart = new Chart(ctx, {
-        type: 'pie',
+    const ctx = document.getElementById('leaveChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
         data: {
             labels: ['Annual Leave', 'Sick Leave', 'Other Leave'],
             datasets: [{
@@ -64,12 +122,26 @@
                     {{ leave_balance.sick_leave }},
                     {{ leave_balance.other_leave }}
                 ],
-                backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+                backgroundColor: ['#4F46E5', '#EF4444', '#10B981'],
+                borderWidth: 0,
+                hoverOffset: 6
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyleWidth: 10,
+                        font: { size: 12, family: 'Inter' }
+                    }
+                }
+            }
         }
     });
 </script>

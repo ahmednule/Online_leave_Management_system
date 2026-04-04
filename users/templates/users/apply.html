@@ -1,51 +1,73 @@
 {% extends "users/base.html" %}
+{% block title %}Apply for Leave - Leave Management System{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <form method="post" action="{% url 'apply' %}">
-        {% csrf_token %}
-        <div class="dropdown mt-3 mb-3">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-              Select Leave Type
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="#" data-value="Sick Leave">Sick Leave</a></li>
-              <li><a class="dropdown-item" href="#" data-value="Annual Leave">Annual Leave</a></li>
-              <li><a class="dropdown-item" href="#" data-value="Maternity Leave">Maternity Leave</a></li>
-              <li><a class="dropdown-item" href="#" data-value="Paternity Leave">Paternity Leave</a></li>
-            </ul>
-            <input type="hidden" id="leaveType" name="leave_type">
-        </div>
+<div class="page-header">
+    <h2>Apply for Leave</h2>
+    <p class="mb-0">Fill out the form below to submit a new leave request.</p>
+</div>
 
-        <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="startDate" class="form-label">Start Date and Time</label>
-              <input type="date" id="startDate" name="startDate" class="form-control">
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-pencil-square me-2"></i>Leave Application Form
             </div>
-            <div class="col-md-6">
-              <label for="endDate" class="form-label">End Date and Time</label>
-              <input type="date" id="endDate" name="endDate" class="form-control">
-            </div>
-        </div>
+            <div class="card-body p-4">
+                <form method="post" action="{% url 'apply' %}" id="leaveForm">
+                    {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="message" class="form-label">Reason:</label>
-            <textarea id="message" name="message" class="form-control" rows="4"></textarea>
+                    <div class="mb-4">
+                        <label for="leaveType" class="form-label">Leave Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="leaveType" name="leave_type" required>
+                            <option value="" disabled selected>Select a leave type...</option>
+                            {% for lt in leave_types %}
+                            <option value="{{ lt.name }}">{{ lt.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="message" class="form-label">Reason for Leave <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="Provide a brief explanation for your leave request..." required></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 pt-2">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send me-1"></i>Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <button type="button" class="btn btn-danger ms-4" aria-label="Cancel">Cancel</button>
-    </form>
+    </div>
 </div>
 
 <script>
-    // JavaScript to update hidden input when dropdown item is selected
-    document.querySelectorAll('.dropdown-item').forEach(function(item) {
-        item.addEventListener('click', function(event) {
-            event.preventDefault();
-            var leaveType = this.getAttribute('data-value');
-            document.getElementById('dropdownMenuButton').innerText = leaveType;
-            document.getElementById('leaveType').value = leaveType;
-        });
+    const startDate = document.getElementById('startDate');
+    const endDate = document.getElementById('endDate');
+    const today = new Date().toISOString().split('T')[0];
+    startDate.setAttribute('min', today);
+    endDate.setAttribute('min', today);
+
+    startDate.addEventListener('change', function() {
+        endDate.setAttribute('min', this.value);
+        if (endDate.value && endDate.value < this.value) {
+            endDate.value = this.value;
+        }
     });
 </script>
 {% endblock %}

@@ -7,6 +7,7 @@ Welcome to the **Online Leave Management System**! This is a user-friendly web a
 ## Table of Contents
 
 - [Features](#features)
+- [Application Preview](#application-preview)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -20,6 +21,28 @@ Welcome to the **Online Leave Management System**! This is a user-friendly web a
 - **Leave Management**: Easily apply for leave, view the status of your applications, and check your leave balances.
 - **Notifications**: Receive timely updates about the status of your leave applications.
 - **Admin Interface**: Admin users can manage users, leave types, and applications through an intuitive admin panel.
+
+## Application Preview
+
+Below is a quick visual walkthrough of the app before and after login.
+
+<table>
+	<tr>
+		<td align="center"><strong>Login</strong><br><img src="screenshots/login.png" alt="Login Page" width="420"></td>
+		<td align="center"><strong>Dashboard</strong><br><img src="screenshots/dashbord.png" alt="Dashboard" width="420"></td>
+	</tr>
+	<tr>
+		<td align="center"><strong>Leave Application</strong><br><img src="screenshots/leave.png" alt="Leave Application" width="420"></td>
+		<td align="center"><strong>Leave Balance</strong><br><img src="screenshots/balance.png" alt="Leave Balance" width="420"></td>
+	</tr>
+	<tr>
+		<td align="center"><strong>Notifications</strong><br><img src="screenshots/notification.png" alt="Notifications" width="420"></td>
+		<td align="center"><strong>Profile</strong><br><img src="screenshots/profile.png" alt="Profile" width="420"></td>
+	</tr>
+	<tr>
+		<td align="center" colspan="2"><strong>Password Reset</strong><br><img src="screenshots/password-reset.png" alt="Password Reset" width="520"></td>
+	</tr>
+</table>
 
 ## Getting Started
 
