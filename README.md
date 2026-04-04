@@ -1,13 +1,11 @@
 ---
-
 # Online Leave Management System
 
-Welcome to the **Online Leave Management System**! This is a user-friendly web application built with Django, designed to help manage employee leave requests efficiently. Whether you're applying for leave, checking your leave balance, or tracking the status of your applications, this system has you covered.
+Welcome to the **Online Leave Management System**! A professional, user-friendly web application built with Django, designed to help manage employee leave requests efficiently. From applying for leave to tracking approvals — this system has you covered.
 
 ## Table of Contents
 
 - [Features](#features)
-- [Application Preview](#application-preview)
 - [Getting Started](#getting-started)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -17,122 +15,142 @@ Welcome to the **Online Leave Management System**! This is a user-friendly web a
 
 ## Features
 
-- **User Authentication**: Secure login, logout, and password management.
-- **Leave Management**: Easily apply for leave, view the status of your applications, and check your leave balances.
-- **Notifications**: Receive timely updates about the status of your leave applications.
-- **Admin Interface**: Admin users can manage users, leave types, and applications through an intuitive admin panel.
+### For Employees
+- **User Authentication**: Secure login, logout, and password management with email-based password reset.
+- **Leave Application**: Apply for leave with type, date range, and reason. Includes duplicate/overlap prevention.
+- **Leave Balance**: View your remaining annual, sick, and other leave days with a visual doughnut chart.
+- **Leave Status Tracking**: Track all your leave applications with status badges (Pending, Approved, Rejected, Cancelled).
+- **Leave Detail View**: Dedicated page with full details of each leave application.
+- **Cancel Pending Requests**: Cancel your own pending leave applications before they are processed.
+- **Profile Management**: Update your role, department, contact information, and password.
 
-## Application Preview
+### For Administrators
+- **Admin Dashboard**: View and manage all employee leave applications.
+- **Search & Filter**: Search by employee name/username, filter by status, and filter by date range.
+- **Pagination**: Manage large lists of leave applications with built-in pagination.
+- **Approve / Reject**: Approve or reject leave requests with a mandatory reason for rejections.
+- **Balance Auto-Deduction**: Automatically deduct leave days from employee balances upon approval.
+- **Email Notifications**: Employees receive email notifications when their leave is approved or rejected.
+- **Team Calendar**: Visual monthly calendar showing who is on approved leave at a glance.
+- **Django Admin**: Full admin panel for managing users, leave types, notices, and awards.
 
-Below is a quick visual walkthrough of the app before and after login.
-
-<table>
-	<tr>
-		<td align="center"><strong>Login</strong><br><img src="screenshots/login.png" alt="Login Page" width="420"></td>
-		<td align="center"><strong>Dashboard</strong><br><img src="screenshots/dashbord.png" alt="Dashboard" width="420"></td>
-	</tr>
-	<tr>
-		<td align="center"><strong>Leave Application</strong><br><img src="screenshots/leave.png" alt="Leave Application" width="420"></td>
-		<td align="center"><strong>Leave Balance</strong><br><img src="screenshots/balance.png" alt="Leave Balance" width="420"></td>
-	</tr>
-	<tr>
-		<td align="center"><strong>Notifications</strong><br><img src="screenshots/notification.png" alt="Notifications" width="420"></td>
-		<td align="center"><strong>Profile</strong><br><img src="screenshots/profile.png" alt="Profile" width="420"></td>
-	</tr>
-	<tr>
-		<td align="center" colspan="2"><strong>Password Reset</strong><br><img src="screenshots/password-reset.png" alt="Password Reset" width="520"></td>
-	</tr>
-</table>
+### System Features
+- **Professional UI**: Modern, responsive Bootstrap-based design with a clean color palette.
+- **Bootstrap Icons**: Consistent iconography throughout the application.
+- **Responsive Design**: Works on desktop and mobile devices.
+- **Real-time Feedback**: Success and error messages for all actions.
+- **MIT Licensed**: Open source and free to use.
 
 ## Getting Started
 
-Follow these simple steps to set up the Online Leave Management System on your local machine.
+Follow these steps to set up the application on your local machine.
 
 ### Prerequisites
 
-Before you begin, ensure you have the following installed:
+- **Python 3.x**
+- **Django 5.x**
+- **SQLite** (default, included)
 
-- **Python 3.x**: A programming language used for building this application.
-- **Django**: A web framework for Python.
-- **SQLite**: The default database used by this application.
+### Installation
 
-## Installation
+#### Step 1: Clone the Repository
 
-### Step 1: Clone the Repository
-
-Open your terminal and run the following command to clone the repository:
-
-```bash
+`ash
 git clone https://github.com/ahmednule/Online_leave_Management_system.git
 cd Online-leave-management-system
-```
+`
 
-### Step 2: Set Up a Virtual Environment
-
-Creating a virtual environment helps manage dependencies for your project.
+#### Step 2: Set Up a Virtual Environment
 
 **For Windows:**
-
-```bash
+`ash
 python -m venv venv
 venv\Scripts\activate
-```
+`
 
 **For Linux/Mac:**
-
-```bash
+`ash
 python3 -m venv venv
 source venv/bin/activate
-```
+`
 
-### Step 3: Install Dependencies
+#### Step 3: Install Dependencies
 
-Install Django using the following command:
+`ash
+pip install -r requirements.txt
+`
 
-```bash
-pip install Django
-```
+#### Step 4: Apply Migrations
 
-### Step 4: Apply Migrations
-
-Run the following command to set up the database:
-
-```bash
+`ash
 python manage.py migrate
-```
+`
 
-### Step 5: Load Initial Data (Optional)
+#### Step 5: Create an Admin User
 
-```skip this process for now```
-### Step 6: Create a Superuser (Optional)
-
-To create an admin user with full access, run:
-
-```bash
+`ash
 python manage.py createsuperuser
-```
+`
 
-### Step 7: Run the Development Server
+#### Step 6: Run the Development Server
 
-Start the server with the following command:
-
-```bash
+`ash
 python manage.py runserver
-```
+`
 
-### Step 8: Access the Application
+#### Step 7: Access the Application
 
-Open your web browser and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/) to access the application.
+Open your browser and go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-## create an admin using django-admin createsuperuser then add a user since the project was nor meant to be a standalone web app.
+---
+
 ## Usage
 
-Once the application is running, you can log in, apply for leave, check your balances, and manage notifications. Admin users can access the admin interface to manage users and leave types.
+### URL Routes
+
+| URL | Description |
+|-----|-------------|
+| / | Dashboard — overview, stats, recent leaves, notices |
+| /apply/ | Submit a new leave application |
+| /balance/ | View your leave balance and chart |
+| /notifications/ | View all your leave applications with filters |
+| /profile/ | Manage your profile and change password |
+| /accounts/login/ | Login page |
+| /accounts/password-reset/ | Request password reset email |
+| /leaves/admin/ | Admin: manage all leave applications |
+| /leaves/admin/?status=Pending | Admin: filter by status |
+| /calendar/ | Admin: team leave calendar |
+
+### Creating Leave Types
+
+As an admin, go to the Django admin panel at /admin/ and add leave types (e.g., Annual Leave, Sick Leave, Maternity Leave, Paternity Leave).
+
+### Setting Up Leave Balances
+
+New users automatically get a default balance (20 annual, 10 sick, 5 other days). Admins can modify balances through the admin panel.
+
+### Email Configuration
+
+The system uses a console email backend by default (emails print to the terminal). For production, update settings.py:
+
+`python
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yourprovider.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your-email@example.com'
+EMAIL_HOST_PASSWORD = 'your-password'
+DEFAULT_FROM_EMAIL = 'Leave System <noreply@example.com>'
+`
 
 ## Contributing
 
-We welcome contributions! Feel free to fork this project and submit pull requests. Your input helps improve the project.
+We welcome contributions! Fork this project and submit pull requests.
 
 ## Contact
 
-For any inquiries or support, please reach out to **Ahmed Nule** at [itsahmednule@gmail.com](mailto: itsahmednule@gmail.com).
+For any inquiries or support, please reach out to **Ahmed Nule** at [itsahmednule@gmail.com](mailto:itsahmednule@gmail.com).
+
+## License
+
+This project is open source under the **MIT License**. See the [LICENSE](LICENSE) file for details.

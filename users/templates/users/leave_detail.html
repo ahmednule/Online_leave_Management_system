@@ -1,0 +1,95 @@
+{% extends "users/base.html" %}
+{% block title %}Leave Details - Leave Management System{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h2><i class="bi bi-file-earmark-text me-2"></i>Leave Details</h2>
+        <p class="mb-0 text-secondary">Application ID #{{ leave.id }}</p>
+    </div>
+    <div>
+        <a href="{% url 'notifications' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-info-circle me-2"></i>Application Information</span>
+                {% if leave.status == 'Approved' %}
+                    <span class="badge badge-approved px-3 py-2 rounded-pill">
+                        <i class="bi bi-check-circle me-1"></i>Approved
+                    </span>
+                {% elif leave.status == 'Rejected' %}
+                    <span class="badge badge-rejected px-3 py-2 rounded-pill">
+                        <i class="bi bi-x-circle me-1"></i>Rejected
+                    </span>
+                {% elif leave.status == 'Cancelled' %}
+                    <span class="badge bg-secondary px-3 py-2 rounded-pill">
+                        <i class="bi bi-slash-circle me-1"></i>Cancelled
+                    </span>
+                {% else %}
+                    <span class="badge badge-pending px-3 py-2 rounded-pill">
+                        <i class="bi bi-hourglass-split me-1"></i>Pending
+                    </span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Leave Type</label>
+                            <p class="mb-0 fw-500 fs-6">{{ leave.leave_type.name }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Duration</label>
+                            <p class="mb-0 fw-500 fs-6">{{ leave.duration }} day(s)</p>
+                        </div>
+                        <div class="mb-0">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Status</label>
+                            <p class="mb-0 fw-500 fs-6">{{ leave.status }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Start Date</label>
+                            <p class="mb-0 fw-500 fs-6">{{ leave.start_date|date:"F d, Y" }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">End Date</label>
+                            <p class="mb-0 fw-500 fs-6">{{ leave.end_date|date:"F d, Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <hr>
+                        <div class="mb-0">
+                            <label class="text-secondary" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Reason / Message</label>
+                            <p class="mb-0 mt-1 p-3 bg-light rounded">{{ leave.message|default:"No message provided."|linebreaks }}</p>
+                        </div>
+                    </div>
+                    {% if leave.status == 'Rejected' and leave.rejection_reason %}
+                    <div class="col-12">
+                        <hr>
+                        <div class="mb-0">
+                            <label class="text-danger" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Rejection Reason
+                            </label>
+                            <p class="mb-0 mt-1 p-3 bg-danger bg-opacity-10 rounded text-danger">{{ leave.rejection_reason|linebreaks }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% if leave.status == 'Pending' %}
+            <div class="card-footer text-end">
+                <a href="{% url 'cancel_leave' leave.id %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this leave application?')">
+                    <i class="bi bi-x-lg me-1"></i>Cancel Application
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

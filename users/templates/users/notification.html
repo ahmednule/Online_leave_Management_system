@@ -1,15 +1,56 @@
 {% extends "users/base.html" %}
 {% block title %}Notifications - Leave Management System{% endblock %}
 {% block content %}
-<div class="page-header">
-    <h2>Leave Status</h2>
-    <p class="mb-0">Track the status of all your leave applications.</p>
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h2>Leave Status</h2>
+        <p class="mb-0 text-secondary">Track the status of all your leave applications.</p>
+    </div>
+    <a href="{% url 'apply' %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>New Leave
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="bi bi-funnel me-2"></i>Filter & Search
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-3">
+                <label for="status" class="form-label small text-secondary">Status</label>
+                <select class="form-select form-select-sm" id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Approved" {% if status_filter == 'Approved' %}selected{% endif %}>Approved</option>
+                    <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                    <option value="Cancelled" {% if status_filter == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="date_from" class="form-label small text-secondary">From Date</label>
+                <input type="date" class="form-control form-control-sm" id="date_from" name="date_from" value="{{ date_from }}">
+            </div>
+            <div class="col-md-3">
+                <label for="date_to" class="form-label small text-secondary">To Date</label>
+                <input type="date" class="form-control form-control-sm" id="date_to" name="date_to" value="{{ date_to }}">
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-search me-1"></i>Apply
+                </button>
+                <a href="{% url 'notifications' %}" class="btn btn-outline-secondary btn-sm">
+                    <i class="bi bi-x-lg me-1"></i>Clear
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-list-ul me-2"></i>All Applications</span>
-        <span class="badge bg-primary rounded-pill">{{ leave_applications|length }} total</span>
+        <span class="badge bg-primary rounded-pill">{{ leave_applications.paginator.count|default:leave_applications|length }} total</span>
     </div>
     <div class="card-body p-0">
         {% if leave_applications %}
@@ -22,6 +63,7 @@
                         <th>End Date</th>
                         <th>Duration</th>
                         <th>Status</th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -30,11 +72,7 @@
                         <td class="fw-500">{{ leave.leave_type.name }}</td>
                         <td>{{ leave.start_date|date:"M d, Y" }}</td>
                         <td>{{ leave.end_date|date:"M d, Y" }}</td>
-                        <td>
-                            {% widthratio leave.end_date|date:"U" 86400 1 as end_days %}
-                            {% widthratio leave.start_date|date:"U" 86400 1 as start_days %}
-                            {{ end_days|add:"0"|add:"-start_days"|add:"0"|add:"1" }} day(s)
-                        </td>
+                        <td>{{ leave.duration }} day(s)</td>
                         <td>
                             {% if leave.status == 'Approved' %}
                                 <span class="badge badge-approved px-3 py-2 rounded-pill">
@@ -44,10 +82,45 @@
                                 <span class="badge badge-rejected px-3 py-2 rounded-pill">
                                     <i class="bi bi-x-circle me-1"></i>Rejected
                                 </span>
+                            {% elif leave.status == 'Cancelled' %}
+                                <span class="badge bg-secondary px-3 py-2 rounded-pill">
+                                    <i class="bi bi-slash-circle me-1"></i>Cancelled
+                                </span>
                             {% else %}
                                 <span class="badge badge-pending px-3 py-2 rounded-pill">
                                     <i class="bi bi-hourglass-split me-1"></i>Pending
                                 </span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <a href="{% url 'leave_detail' leave.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i>View
+                            </a>
+                            {% if leave.status == 'Rejected' and leave.rejection_reason %}
+                            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#reasonModal{{ leave.id }}">
+                                <i class="bi bi-chat-left-text me-1"></i>Reason
+                            </button>
+                            <div class="modal fade" id="reasonModal{{ leave.id }}" tabindex="-1" aria-labelledby="reasonModalLabel{{ leave.id }}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="reasonModalLabel{{ leave.id }}">Rejection Reason</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {{ leave.rejection_reason|default:"No reason provided."|linebreaks }}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if leave.status == 'Pending' %}
+                            <a href="{% url 'cancel_leave' leave.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to cancel this leave application?')">
+                                <i class="bi bi-x-lg me-1"></i>Cancel
+                            </a>
                             {% endif %}
                         </td>
                     </tr>
@@ -55,6 +128,29 @@
                 </tbody>
             </table>
         </div>
+        {% if leave_applications.has_other_pages %}
+        <div class="card-footer d-flex justify-content-center">
+            <nav>
+                <ul class="pagination mb-0">
+                    {% if leave_applications.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}"><i class="bi bi-chevron-double-left"></i></a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ leave_applications.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}"><i class="bi bi-chevron-left"></i></a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link"><i class="bi bi-chevron-double-left"></i></a></li>
+                        <li class="page-item disabled"><a class="page-link"><i class="bi bi-chevron-left"></i></a></li>
+                    {% endif %}
+                    <li class="page-item active"><a class="page-link">Page {{ leave_applications.number }} of {{ leave_applications.paginator.num_pages }}</a></li>
+                    {% if leave_applications.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ leave_applications.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}"><i class="bi bi-chevron-right"></i></a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ leave_applications.paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if date_from %}&date_from={{ date_from }}{% endif %}{% if date_to %}&date_to={{ date_to }}{% endif %}"><i class="bi bi-chevron-double-right"></i></a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link"><i class="bi bi-chevron-right"></i></a></li>
+                        <li class="page-item disabled"><a class="page-link"><i class="bi bi-chevron-double-right"></i></a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
         {% else %}
         <div class="text-center py-5 text-secondary">
             <i class="bi bi-bell-slash fs-1 d-block mb-3"></i>

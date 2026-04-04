@@ -1,4 +1,4 @@
-from django.db import models
+﻿from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
@@ -24,11 +24,13 @@ class LeaveApplication(models.Model):
     PENDING = 'Pending'
     APPROVED = 'Approved'
     REJECTED = 'Rejected'
+    CANCELLED = 'Cancelled'
 
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
         (APPROVED, 'Approved'),
         (REJECTED, 'Rejected'),
+        (CANCELLED, 'Cancelled'),
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -37,10 +39,15 @@ class LeaveApplication(models.Model):
     end_date = models.DateField()
     message = models.TextField(default='')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=PENDING)
+    rejection_reason = models.TextField(blank=True, default='')
 
     def __str__(self):
-        return f"{self.user.username} - {self.leave_type.name}"
-    
+        return f'{self.user.username} - {self.leave_type.name}'
+
+    @property
+    def duration(self):
+        return (self.end_date - self.start_date).days + 1
+
 class LeaveBalance(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     annual_leave = models.IntegerField(default=0)
@@ -48,8 +55,8 @@ class LeaveBalance(models.Model):
     other_leave = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.user.username} - Leave Balance"
-    
+        return f'{self.user.username} - Leave Balance'
+
 class Notification(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     message = models.TextField()
@@ -57,7 +64,7 @@ class Notification(models.Model):
     is_read = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Notification for {self.user.username}"
+        return f'Notification for {self.user.username}'
 
 class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -70,22 +77,23 @@ class Profile(models.Model):
     address = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
-    
+        return f'Profile of {self.user.username}'
+
 class Notice(models.Model):
     vacancy = models.CharField(max_length=50)
-    date=models.DateField()
-    month=models.CharField(max_length=50)
-    announcements=models.TextField()
+    date = models.DateField()
+    month = models.CharField(max_length=50)
+    announcements = models.TextField()
+
     def __str__(self):
         return self.vacancy
-    
+
 class Awards(models.Model):
-    award=models.CharField(max_length=50)
+    award = models.CharField(max_length=50)
 
     def __str__(self):
         return self.award
-    
+
 class Employee_Details(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
@@ -97,4 +105,4 @@ class Employee_Details(models.Model):
     address = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
+        return f'Profile of {self.user.username}'
