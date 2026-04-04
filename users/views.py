@@ -1,18 +1,38 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash, logout
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm, AuthenticationForm
+from django.contrib.auth import update_session_auth_hash, logout, login
 from django.contrib import messages
 from django.urls import reverse
 from django.http import Http404, HttpResponse
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
+from django.db.models import Q, Count, Avg
 from datetime import datetime
 from .models import LeaveType, LeaveApplication, Notification, LeaveBalance, Profile, Notice, Awards
 from .forms import ProfileForm, ContactForm
 
 ITEMS_PER_PAGE = 10
+
+def user_login(request):
+    if request.user.is_authenticated:
+        if request.user.is_superuser:
+            return redirect('/admin/')
+        return redirect('home')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            if user.is_superuser:
+                return redirect('/admin/')
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect('home')
+    else:
+        form = AuthenticationForm(request)
+    return render(request, 'registration/login.html', {'form': form})
 
 @login_required
 def home(request):
@@ -232,6 +252,8 @@ def admin_approve_leave(request, leave_id):
     leave_balance.save()
 
     leave_application.status = 'Approved'
+    leave_application.approved_by = request.user
+    leave_application.approved_at = datetime.now()
     leave_application.save()
 
     Notification.objects.create(
@@ -277,6 +299,8 @@ def admin_reject_leave(request, leave_id):
 
     leave_application.status = 'Rejected'
     leave_application.rejection_reason = rejection_reason
+    leave_application.rejected_by = request.user
+    leave_application.rejected_at = datetime.now()
     leave_application.save()
 
     Notification.objects.create(
@@ -385,6 +409,86 @@ def team_calendar(request):
         'next_year': next_year,
         'next_month': next_month,
     })
+
+
+
+@login_required
+def admin_analytics(request):
+    if not request.user.is_superuser:
+        raise Http404('Admin access required.')
+    total = LeaveApplication.objects.count()
+    approved = LeaveApplication.objects.filter(status='Approved').count()
+    rejected = LeaveApplication.objects.filter(status='Rejected').count()
+    pending = LeaveApplication.objects.filter(status='Pending').count()
+    cancelled = LeaveApplication.objects.filter(status='Cancelled').count()
+    approval_rate = round((approved / total * 100), 1) if total > 0 else 0
+    rejection_rate = round((rejected / total * 100), 1) if total > 0 else 0
+    by_type = list(LeaveApplication.objects.values('leave_type__name').annotate(count=Count('id')).order_by('-count'))
+    by_department = list(Profile.objects.values('department').annotate(count=Count('user')).order_by('-count')[:10])
+    by_status = list(LeaveApplication.objects.values('status').annotate(count=Count('id')).order_by('-count'))
+    approved_this_month = LeaveApplication.objects.filter(status='Approved', start_date__month=datetime.now().month, start_date__year=datetime.now().year).count()
+    pending_this_month = LeaveApplication.objects.filter(status='Pending', start_date__month=datetime.now().month, start_date__year=datetime.now().year).count()
+    return render(request, 'users/admin_analytics.html', {
+        'total': total, 'approved': approved, 'rejected': rejected,
+        'pending': pending, 'cancelled': cancelled,
+        'approval_rate': approval_rate, 'rejection_rate': rejection_rate,
+        'by_type': by_type, 'by_department': by_department,
+        'by_status': by_status,
+        'approved_this_month': approved_this_month,
+        'pending_this_month': pending_this_month,
+    })
+
+@login_required
+def manage_leave_types(request):
+    if not request.user.is_superuser:
+        raise Http404('Admin access required.')
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'add':
+            name = request.POST.get('name', '').strip()
+            if name and not LeaveType.objects.filter(name__iexact=name).exists():
+                LeaveType.objects.create(name=name)
+                messages.success(request, f'Leave type added successfully.')
+            else:
+                messages.error(request, 'Leave type already exists or name is invalid.')
+        elif action == 'delete':
+            lt_id = request.POST.get('leave_type_id')
+            lt = get_object_or_404(LeaveType, id=lt_id)
+            lt.delete()
+            messages.success(request, 'Leave type deleted.')
+        elif action == 'edit':
+            lt_id = request.POST.get('leave_type_id')
+            new_name = request.POST.get('new_name', '').strip()
+            lt = get_object_or_404(LeaveType, id=lt_id)
+            lt.name = new_name
+            lt.save()
+            messages.success(request, 'Leave type updated.')
+    leave_types = LeaveType.objects.all().order_by('name')
+    return render(request, 'users/leave_types.html', {'leave_types': leave_types})
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(
+                user=user,
+                first_name=request.POST.get('first_name', ''),
+                last_name=request.POST.get('last_name', ''),
+                email=request.POST.get('email', ''),
+                role=request.POST.get('role', ''),
+                department=request.POST.get('department', '')
+            )
+            LeaveBalance.objects.create(user=user, annual_leave=20, sick_leave=10, other_leave=5)
+            login(request, user)
+            messages.success(request, 'Registration successful! Welcome aboard.')
+            return redirect('home')
+        messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 def user_logout(request):
     logout(request)

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register - Leave Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4F46E5; --primary-hover: #4338CA; --primary-light: #EEF2FF; --surface: #FFFFFF; --background: #F8FAFC; --text-primary: #1E293B; --text-secondary: #64748B; --border: #E2E8F0; --success: #10B981; --warning: #F59E0B; --danger: #EF4444; }
+        * { font-family: 'Inter', sans-serif; }
+        body { background-color: var(--background); color: var(--text-primary); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+        .card { border: 1px solid var(--border); border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .card-header { background-color: var(--surface); border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.95rem; padding: 1rem 1.25rem; }
+        .form-control, .form-select { border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.625rem 0.875rem; font-size: 0.875rem; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+        .form-control:focus, .form-select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+        .form-label { font-weight: 500; font-size: 0.875rem; color: var(--text-primary); margin-bottom: 0.375rem; }
+        .btn-primary { background-color: var(--primary); border-color: var(--primary); font-weight: 500; border-radius: 0.5rem; }
+        .btn-primary:hover { background-color: var(--primary-hover); border-color: var(--primary-hover); }
+        .text-primary { color: var(--primary) !important; }
+    </style>
+</head>
+<body>
+    <div class="w-100" style="max-width: 560px">
+        <div class="text-center mb-4">
+            <div class="bg-primary bg-opacity-10 rounded-circle p-3 d-inline-block mb-3">
+                <i class="bi bi-calendar-check text-primary" style="font-size: 2rem;"></i>
+            </div>
+            <h4 class="fw-700 mb-1">Create Your Account</h4>
+            <p class="text-secondary mb-0" style="font-size: 0.9rem;">Join the Leave Management System</p>
+        </div>
+        <div class="card">
+            <div class="card-header"><i class="bi bi-person-plus me-2"></i>Employee Registration</div>
+            <div class="card-body p-4">
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger mb-3">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="id_username" class="form-label">Username <span class="text-danger">*</span></label>
+                            {{ form.username }}
+                            {% if form.username.errors %}<div class="text-danger mt-1" style="font-size:0.8rem;">{% for e in form.username.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" name="email" id="id_email" class="form-control" placeholder="employee@company.com" required value="{{ request.POST.email|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <input type="text" name="first_name" id="id_first_name" class="form-control" placeholder="John" required value="{{ request.POST.first_name|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" name="last_name" id="id_last_name" class="form-control" placeholder="Doe" required value="{{ request.POST.last_name|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_password1" class="form-label">Password <span class="text-danger">*</span></label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}<div class="text-danger mt-1" style="font-size:0.8rem;">{% for e in form.password1.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_password2" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}<div class="text-danger mt-1" style="font-size:0.8rem;">{% for e in form.password2.errors %}{{ e }}{% endfor %}</div>{% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_role" class="form-label">Role <span class="text-danger">*</span></label>
+                            <input type="text" name="role" id="id_role" class="form-control" placeholder="Software Engineer" required value="{{ request.POST.role|default:'' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_department" class="form-label">Department <span class="text-danger">*</span></label>
+                            <input type="text" name="department" id="id_department" class="form-control" placeholder="Engineering" required value="{{ request.POST.department|default:'' }}">
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-500">
+                            <i class="bi bi-person-plus me-1"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <span class="text-secondary" style="font-size: 0.875rem;">Already have an account? <a href="{% url 'login' %}" class="text-primary fw-500">Sign in</a></span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

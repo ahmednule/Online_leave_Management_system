@@ -1,0 +1,199 @@
+{% extends "users/base.html" %}
+{% block title %}Analytics - Leave Management{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+    <div>
+        <h2><i class="bi bi-bar-chart-line me-2"></i>Admin Analytics</h2>
+        <p class="mb-0 text-secondary">Overview of leave application statistics and trends.</p>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Total Applications</p>
+                        <h3 class="stat-value mb-0">{{ total }}</h3>
+                    </div>
+                    <div class="stat-icon bg-primary bg-opacity-10"><i class="bi bi-file-earmark-text text-primary"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Approved</p>
+                        <h3 class="stat-value mb-0">{{ approved }}</h3>
+                        <small class="text-success fw-500">{{ approval_rate }}% approval rate</small>
+                    </div>
+                    <div class="stat-icon bg-success bg-opacity-10"><i class="bi bi-check-circle text-success"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Rejected</p>
+                        <h3 class="stat-value mb-0">{{ rejected }}</h3>
+                        <small class="text-danger fw-500">{{ rejection_rate }}% rejection rate</small>
+                    </div>
+                    <div class="stat-icon bg-danger bg-opacity-10"><i class="bi bi-x-circle text-danger"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Pending</p>
+                        <h3 class="stat-value mb-0">{{ pending }}</h3>
+                    </div>
+                    <div class="stat-icon bg-warning bg-opacity-10"><i class="bi bi-clock text-warning"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Cancelled</p>
+                        <h3 class="stat-value mb-0">{{ cancelled }}</h3>
+                    </div>
+                    <div class="stat-icon bg-secondary bg-opacity-10"><i class="bi bi-slash-circle text-secondary"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Approved This Month</p>
+                        <h3 class="stat-value mb-0">{{ approved_this_month }}</h3>
+                    </div>
+                    <div class="stat-icon bg-success bg-opacity-10"><i class="bi bi-calendar-check text-success"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="stat-label mb-1">Pending This Month</p>
+                        <h3 class="stat-value mb-0">{{ pending_this_month }}</h3>
+                    </div>
+                    <div class="stat-icon bg-warning bg-opacity-10"><i class="bi bi-calendar-x text-warning"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-pie-chart me-2"></i>By Leave Type</div>
+            <div class="card-body p-0">
+                {% if by_type %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-3">Leave Type</th>
+                                <th class="text-center">Applications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in by_type %}
+                            <tr>
+                                <td class="px-3">{{ item.leave_type__name }}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ item.count }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-secondary py-4"><i class="bi bi-inbox" style="font-size:2rem;"></i><p class="mt-2 mb-0">No data available</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-bar-chart me-2"></i>By Status</div>
+            <div class="card-body p-0">
+                {% if by_status %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-3">Status</th>
+                                <th class="text-center">Applications</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in by_status %}
+                            <tr>
+                                <td class="px-3">{% if item.status == 'Approved' %}<span class="badge bg-success">Approved</span>{% elif item.status == 'Rejected' %}<span class="badge bg-danger">Rejected</span>{% elif item.status == 'Pending' %}<span class="badge bg-warning">Pending</span>{% elif item.status == 'Cancelled' %}<span class="badge bg-secondary">Cancelled</span>{% else %}{{ item.status }}{% endif %}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ item.count }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-secondary py-4"><i class="bi bi-inbox" style="font-size:2rem;"></i><p class="mt-2 mb-0">No data available</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header"><i class="bi bi-building me-2"></i>By Department</div>
+            <div class="card-body p-0">
+                {% if by_department %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th class="px-3">Department</th>
+                                <th class="text-center">Employees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in by_department %}
+                            <tr>
+                                <td class="px-3">{{ item.department|default:"Unassigned" }}</td>
+                                <td class="text-center"><span class="badge bg-primary">{{ item.count }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center text-secondary py-4"><i class="bi bi-inbox" style="font-size:2rem;"></i><p class="mt-2 mb-0">No data available</p></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -33,13 +33,17 @@ class LeaveApplication(models.Model):
         (CANCELLED, 'Cancelled'),
     ]
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='leave_applications')
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     message = models.TextField(default='')
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=PENDING)
     rejection_reason = models.TextField(blank=True, default='')
+    approved_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_leaves')
+    approved_at = models.DateTimeField(null=True, blank=True)
+    rejected_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='rejected_leaves')
+    rejected_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'{self.user.username} - {self.leave_type.name}'
@@ -106,3 +110,4 @@ class Employee_Details(models.Model):
 
     def __str__(self):
         return f'Profile of {self.user.username}'
+
