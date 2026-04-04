@@ -112,4 +112,4 @@ We welcome contributions! Feel free to fork this project and submit pull request
 
 ## Contact
 
-For any inquiries or support, please reach out to **Judy Auma** at [itsahmednule@gmail.com](mailto: itsahmednule@gmail.com).
+For any inquiries or support, please reach out to **Ahmed Nule** at [itsahmednule@gmail.com](mailto: itsahmednule@gmail.com).

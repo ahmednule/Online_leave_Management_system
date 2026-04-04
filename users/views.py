@@ -11,9 +11,8 @@ from .forms import ProfileForm, ContactForm
 @login_required
 def home(request):
     leave_applications = LeaveApplication.objects.filter(user=request.user).order_by('-start_date')
-    notice=Notice.objects.all()
-    awards=Awards.objects.all()
-    leave_applications=LeaveApplication.objects.all()
+    notice = Notice.objects.all()
+    awards = Awards.objects.all()
 
     return render(request, 'users/home.html', {
         'notice': notice,

@@ -21,12 +21,22 @@ class LeaveType(models.Model):
         return self.name
 
 class LeaveApplication(models.Model):
+    PENDING = 'Pending'
+    APPROVED = 'Approved'
+    REJECTED = 'Rejected'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected'),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     leave_type = models.ForeignKey(LeaveType, on_delete=models.CASCADE)
     start_date = models.DateField()
     end_date = models.DateField()
     message = models.TextField(default='')
-    status = models.CharField(max_length=50, default='Pending')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default=PENDING)
 
     def __str__(self):
         return f"{self.user.username} - {self.leave_type.name}"
