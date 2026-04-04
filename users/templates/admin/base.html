@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}LMS Admin{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'admin/css/base.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -11,10 +11,14 @@
         :root {
             --primary: #4F46E5;
             --primary-hover: #4338CA;
-            --primary-light: #EEF2FF;
-            --header-bg: #4F46E5;
-            --header-color: #ffffff;
-            --surface: #ffffff;
+            --sidebar-bg: #1E293B;
+            --sidebar-hover: #334155;
+            --sidebar-active: #4F46E5;
+            --sidebar-text: #94A3B8;
+            --sidebar-text-active: #FFFFFF;
+            --topbar-height: 56px;
+            --sidebar-width: 260px;
+            --surface: #FFFFFF;
             --background: #F8FAFC;
             --text-primary: #1E293B;
             --text-secondary: #64748B;
@@ -23,88 +27,250 @@
             --danger: #EF4444;
             --warning: #F59E0B;
         }
-        * { font-family: 'Inter', sans-serif; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
         body {
             font-family: 'Inter', sans-serif !important;
             background: var(--background) !important;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* ===== TOP BAR ===== */
         #header {
-            background: var(--primary) !important;
-            border-bottom: none !important;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--topbar-height);
+            background: #FFFFFF !important;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.25rem;
+            z-index: 1000;
         }
         #header a:link, #header a:visited {
-            color: #fff !important;
-            font-weight: 700;
-            font-size: 1.1rem;
+            color: var(--text-primary) !important;
             text-decoration: none;
         }
-        #header a:hover { color: rgba(255,255,255,0.85) !important; }
-        #user-tools a {
-            color: rgba(255,255,255,0.9) !important;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-        #user-tools a:hover { color: #fff !important; }
+        #header a:hover { color: var(--primary) !important; }
         #branding h1 {
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.1rem;
+            color: var(--primary) !important;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        #branding h1 .bi { font-size: 1.25rem; }
+        #user-tools {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        #user-tools a {
+            color: var(--text-secondary) !important;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.15s;
+        }
+        #user-tools a:hover { color: var(--primary) !important; }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        /* ===== SIDEBAR ===== */
+        #sidebar {
+            position: fixed;
+            top: var(--topbar-height);
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            overflow-y: auto;
+            z-index: 900;
+            transition: transform 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-track { background: transparent; }
+        #sidebar::-webkit-scrollbar-thumb { background: #475569; border-radius: 2px; }
+        .sidebar-nav { flex: 1; padding: 0.75rem 0; }
+        .sidebar-section { margin-bottom: 0.25rem; }
+        .sidebar-section-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748B;
+            padding: 0.75rem 1.25rem 0.375rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            padding: 0.5rem 1.25rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            font-size: 0.825rem;
+            font-weight: 500;
+            transition: all 0.15s;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--sidebar-text-active);
+            text-decoration: none;
+        }
+        .sidebar-link.active {
+            background: rgba(79, 70, 229, 0.15);
+            color: #818CF8;
+            border-left-color: #818CF8;
+        }
+        .sidebar-link .bi { font-size: 1rem; width: 1.25rem; text-align: center; flex-shrink: 0; }
+        .sidebar-sub { padding-left: 1rem; }
+        .sidebar-sub .sidebar-link {
+            font-size: 0.8rem;
+            padding: 0.375rem 1.25rem;
+            border-left: 3px solid transparent;
+        }
+        .sidebar-sub .sidebar-link .bi { font-size: 0.6rem; }
+        .sidebar-footer {
+            border-top: 1px solid #334155;
+            padding: 0.75rem 0;
+        }
+        .sidebar-footer .sidebar-link {
+            color: #64748B;
+        }
+        .sidebar-footer .sidebar-link:hover {
+            color: var(--sidebar-text-active);
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: var(--topbar-height);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 850;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        #main-wrapper {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--topbar-height);
+            min-height: calc(100vh - var(--topbar-height));
+            transition: margin-left 0.25s ease;
+        }
+        #content {
+            padding: 1.5rem 2rem !important;
+            max-width: 1200px;
+        }
+        .breadcrumbs {
+            padding: 0.75rem 2rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .breadcrumbs a { color: var(--primary); text-decoration: none; }
+        .breadcrumbs a:hover { text-decoration: underline; }
+        .breadcrumbs ul { list-style: none; display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem; }
+        .breadcrumbs ul li::after { content: '\203A'; margin-left: 0.25rem; color: var(--text-secondary); }
+        .breadcrumbs ul li:last-child::after { content: ''; }
+
+        /* ===== DJANGO ADMIN OVERRIDES ===== */
+        .module {
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .module h2, .module caption {
             background: var(--primary) !important;
             font-family: 'Inter', sans-serif !important;
             font-weight: 600 !important;
+            font-size: 0.85rem !important;
+            padding: 0.75rem 1rem !important;
+            border: none !important;
         }
-        .card {
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        .module table {
+            width: 100%;
         }
-        .module {
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-        #content {
-            padding: 1.5rem 2rem !important;
-        }
-        .breadcrumbs {
-            font-size: 0.8rem;
+        .module table th {
+            text-align: left;
+            padding: 0.625rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
             color: var(--text-secondary);
+            background: #F8FAFC;
+            border-bottom: 1px solid var(--border);
         }
-        .breadcrumbs a { color: var(--primary); text-decoration: none; }
-        .breadcrumbs a:hover { text-decoration: underline; }
-        .submit-row a.deletelink,
-        .submit-row input[type="submit"][name="_reject"] {
-            background: var(--danger) !important;
-            border-color: var(--danger) !important;
+        .module table td {
+            padding: 0.625rem 1rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
         }
-        .submit-row input[type="submit"][name="_approve"] {
-            background: var(--success) !important;
-            border-color: var(--success) !important;
-        }
-        .object-tools a, .object-tools input[type="submit"] {
-            background: var(--primary) !important;
-            border-color: var(--primary) !important;
-            font-weight: 500;
-            font-family: 'Inter', sans-serif;
-        }
-        .object-tools a:hover, .object-tools input[type="submit"]:hover {
-            background: var(--primary-hover) !important;
-            border-color: var(--primary-hover) !important;
-        }
+        .row1 { background: #fff; }
+        .row2 { background: #F8FAFC; }
         .button, input[type="submit"], input[type="button"], .submit-row input {
             background: var(--primary) !important;
             border-color: var(--primary) !important;
             font-family: 'Inter', sans-serif !important;
             font-weight: 500 !important;
             border-radius: 0.375rem !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.8rem !important;
         }
         .button:hover, input[type="submit"]:hover {
+            background: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+        .object-tools a, .object-tools input[type="submit"] {
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            border-radius: 0.375rem !important;
+            font-size: 0.8rem !important;
+        }
+        .object-tools a:hover, .object-tools input[type="submit"]:hover {
             background: var(--primary-hover) !important;
             border-color: var(--primary-hover) !important;
         }
@@ -115,29 +281,62 @@
             font-family: 'Inter', sans-serif !important;
             border-radius: 0.5rem !important;
         }
-        .row1 { background: #fff; }
-        .row2 { background: #F8FAFC; }
-        #changelist-form .results th { background: var(--primary-light) !important; }
-        .selector h2 { background: var(--primary) !important; }
-        .calendar caption { background: var(--primary) !important; }
-        .calendar td a:hover { background: var(--primary) !important; color: #fff; }
-        .admin-portal-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            background: rgba(255,255,255,0.15);
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #fff;
-            text-decoration: none;
-            margin-right: 1rem;
+        .messagelist {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem;
         }
-        .admin-portal-link:hover { background: rgba(255,255,255,0.25); color: #fff; }
+        .messagelist li {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+        .messagelist li.success { background: #D1FAE5; color: #065F46; }
+        .messagelist li.error { background: #FEE2E2; color: #991B1B; }
+        .messagelist li.warning { background: #FEF3C7; color: #92400E; }
+        .messagelist li.info { background: #DBEAFE; color: #1E40AF; }
         select, input[type="text"], input[type="password"], input[type="number"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], textarea {
             font-family: 'Inter', sans-serif;
             border-radius: 0.375rem !important;
+            border: 1px solid var(--border) !important;
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.85rem !important;
+        }
+        select:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, textarea:focus {
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1) !important;
+            outline: none;
+        }
+        .submit-row a.deletelink {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+        }
+        .submit-row a.deletelink:hover {
+            background: #DC2626 !important;
+            border-color: #DC2626 !important;
+        }
+        .selector h2 { background: var(--primary) !important; }
+        .calendar caption { background: var(--primary) !important; }
+        .calendar td a:hover { background: var(--primary) !important; color: #fff; }
+        .calendar td a { border-radius: 0.25rem; }
+        #changelist-form .results th { background: var(--primary-light) !important; }
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        #content-main { padding-top: 0.5rem; }
+
+        /* ===== MOBILE ===== */
+        @media (max-width: 768px) {
+            .sidebar-toggle { display: block; }
+            #sidebar { transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; }
+            #main-wrapper { margin-left: 0; }
+            #content { padding: 1rem !important; }
+            .breadcrumbs { padding: 0.75rem 1rem; }
         }
     </style>
     {% block extrastyle %}{% endblock %}
@@ -146,69 +345,159 @@
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
     {% load i18n %}
 
+    {# ===== TOP BAR ===== #}
     <div id="header">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding: 0 1rem;">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+            <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+                <i class="bi bi-list"></i>
+            </button>
             <div id="branding">
                 <h1>
                     <i class="bi bi-shield-lock"></i>
                     {% block branding %}{{ site_header|default:_('Django Administration') }}{% endblock %}
                 </h1>
             </div>
-            <div style="display:flex; align-items:center;">
-                <a href="{% url 'home' %}" class="admin-portal-link" target="_blank">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                    User Portal
-                </a>
-                {% block usertools %}
-                <div id="user-tools">
-                    {% block welcome-msg %}
-                        <strong>{% firstof user.get_short_name user.get_username %}</strong> /
-                    {% endblock %}
-                    {% block userlinks %}
-                        {% if site_url %}
-                            <a href="{{ site_url }}">{% translate 'View site' %}</a> /
-                        {% endif %}
-                        {% if user.has_usable_password %}
-                        <a href="{% url 'admin:password_change' %}">{% translate 'Change password' %}</a> /
-                        {% endif %}
-                        <a href="{% url 'admin:logout' %}">{% translate 'Log out' %}</a>
-                    {% endblock %}
-                </div>
-                {% endblock %}
-            </div>
+        </div>
+        <div id="user-tools">
+            {% block welcome-msg %}
+                <span class="user-avatar">{% firstof user.get_short_name|slice:":1" user.get_username|slice:":1" %}</span>
+                <span class="user-name">{% firstof user.get_short_name user.get_username %}</span>
+            {% endblock %}
+            {% block userlinks %}
+                {% if site_url %}
+                    <a href="{{ site_url }}" title="View site"><i class="bi bi-globe"></i></a>
+                {% endif %}
+                {% if user.has_usable_password %}
+                <a href="{% url 'admin:password_change' %}" title="Change password"><i class="bi bi-key"></i></a>
+                {% endif %}
+                <a href="{% url 'admin:logout' %}" title="Log out"><i class="bi bi-box-arrow-right"></i></a>
+            {% endblock %}
         </div>
     </div>
 
-    {% block nav-breadcrumbs %}
-    <nav id="breadcrumbs">
-        <ul class="breadcrumb">
-            <li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
-            {% block breadcrumbs %}{% endblock %}
-        </ul>
-    </nav>
-    {% endblock %}
+    {# ===== SIDEBAR ===== #}
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <nav id="sidebar">
+        <div class="sidebar-nav">
+            {# Dashboard #}
+            <div class="sidebar-section">
+                <a href="{% url 'admin:index' %}" class="sidebar-link {% if request.path == '/admin/' %}active{% endif %}">
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </div>
 
-    <div id="content" class="{% block coltype %}colM{% endblock %}">
-        {% block messages %}
-            {% if messages %}
-            <ul class="messagelist">
-                {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message|capfirst }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endblock messages %}
-        {% block pretitle %}{% endblock %}
-        {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
-        <div id="content-main">
-            {% block object-tools %}{% endblock %}
-            {% block content %}
-                {% block object-related-items %}{% endblock %}
-            {% endblock %}
+            {# Leave Management #}
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Leave Management</div>
+                <a href="{% url 'admin:users_leaveapplication_changelist' %}" class="sidebar-link {% if 'leaveapplication' in request.path %}active{% endif %}">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Applications</span>
+                </a>
+                <a href="{% url 'admin:users_leavebalance_changelist' %}" class="sidebar-link {% if 'leavebalance' in request.path %}active{% endif %}">
+                    <i class="bi bi-wallet2"></i>
+                    <span>Balances</span>
+                </a>
+                <a href="{% url 'admin:users_leavetype_changelist' %}" class="sidebar-link {% if 'leavetype' in request.path %}active{% endif %}">
+                    <i class="bi bi-tags"></i>
+                    <span>Leave Types</span>
+                </a>
+            </div>
+
+            {# User Management #}
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">User Management</div>
+                <a href="{% url 'admin:users_user_changelist' %}" class="sidebar-link {% if 'users/user' in request.path %}active{% endif %}">
+                    <i class="bi bi-people"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{% url 'admin:users_profile_changelist' %}" class="sidebar-link {% if 'profile' in request.path %}active{% endif %}">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Profiles</span>
+                </a>
+                <a href="{% url 'admin:users_employee_details_changelist' %}" class="sidebar-link {% if 'employee_details' in request.path %}active{% endif %}">
+                    <i class="bi bi-person-vcard"></i>
+                    <span>Employee Details</span>
+                </a>
+            </div>
+
+            {# Content #}
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Content</div>
+                <a href="{% url 'admin:users_awards_changelist' %}" class="sidebar-link {% if 'awards' in request.path %}active{% endif %}">
+                    <i class="bi bi-trophy"></i>
+                    <span>Awards</span>
+                </a>
+                <a href="{% url 'admin:users_notice_changelist' %}" class="sidebar-link {% if 'notice' in request.path %}active{% endif %}">
+                    <i class="bi bi-megaphone"></i>
+                    <span>Notices</span>
+                </a>
+            </div>
+
+            {# Notifications #}
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">System</div>
+                <a href="{% url 'admin:users_notification_changelist' %}" class="sidebar-link {% if 'notification' in request.path %}active{% endif %}">
+                    <i class="bi bi-bell"></i>
+                    <span>Notifications</span>
+                </a>
+            </div>
         </div>
-        {% block sidebar %}{% endblock %}
+
+        {# Sidebar Footer #}
+        <div class="sidebar-footer">
+            <a href="/" class="sidebar-link" target="_blank">
+                <i class="bi bi-box-arrow-up-right"></i>
+                <span>User Portal</span>
+            </a>
+        </div>
+    </nav>
+
+    {# ===== MAIN CONTENT ===== #}
+    <div id="main-wrapper">
+        {% block nav-breadcrumbs %}
+        <nav class="breadcrumbs">
+            <ul>
+                <li><a href="{% url 'admin:index' %}">Home</a></li>
+                {% block breadcrumbs %}{% endblock %}
+            </ul>
+        </nav>
+        {% endblock %}
+
+        <div id="content" class="{% block coltype %}colM{% endblock %}">
+            {% block messages %}
+                {% if messages %}
+                <ul class="messagelist">
+                    {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message|capfirst }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            {% endblock messages %}
+            {% block pretitle %}{% endblock %}
+            {% block content_title %}{% if title %}<h1>{{ title }}</h1>{% endif %}{% endblock %}
+            <div id="content-main">
+                {% block object-tools %}{% endblock %}
+                {% block content %}
+                    {% block object-related-items %}{% endblock %}
+                {% endblock %}
+            </div>
+            {% block sidebar %}{% endblock %}
+        </div>
     </div>
 
     {% block extrascript %}{% endblock %}
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('sidebar').classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('show');
+            }
+        });
+    </script>
 </body>
 </html>
