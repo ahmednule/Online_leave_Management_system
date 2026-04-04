@@ -1,0 +1,451 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+{% block title %}Dashboard — {{ site_title }}{% endblock %}
+{% block breadcrumbs %}
+<li>Dashboard</li>
+{% endblock %}
+{% block content_title %}{% endblock %}
+{% block content %}
+
+<style>
+    .dashboard-grid {
+        display: grid;
+        gap: 1.25rem;
+    }
+    .stat-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .stat-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transform: translateY(-1px);
+    }
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 0.625rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+    .stat-icon.primary { background: #EEF2FF; color: #4F46E5; }
+    .stat-icon.success { background: #D1FAE5; color: #10B981; }
+    .stat-icon.warning { background: #FEF3C7; color: #F59E0B; }
+    .stat-icon.info { background: #DBEAFE; color: #3B82F6; }
+    .stat-info { flex: 1; min-width: 0; }
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.25rem;
+    }
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.1;
+    }
+    .stat-sub {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+    .stat-sub .up { color: #10B981; font-weight: 600; }
+    .stat-sub .down { color: #EF4444; font-weight: 600; }
+    .charts-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    .chart-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .chart-card h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .chart-card h3 .bi { color: var(--primary); }
+    .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+    .recent-table {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .recent-table-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .recent-table-header h3 {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .recent-table-header h3 .bi { color: var(--primary); }
+    .recent-table-header a {
+        font-size: 0.8rem;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    .recent-table-header a:hover { text-decoration: underline; }
+    .recent-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .recent-table th {
+        text-align: left;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-secondary);
+        background: #F8FAFC;
+        border-bottom: 1px solid var(--border);
+    }
+    .recent-table td {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.825rem;
+        border-bottom: 1px solid #F1F5F9;
+        color: var(--text-primary);
+    }
+    .recent-table tr:last-child td { border-bottom: none; }
+    .recent-table tr:hover td { background: #F8FAFC; }
+    .status-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+    }
+    .status-badge.pending { background: #FEF3C7; color: #92400E; }
+    .status-badge.approved { background: #D1FAE5; color: #065F46; }
+    .status-badge.rejected { background: #FEE2E2; color: #991B1B; }
+    .status-badge.cancelled { background: #F3F4F6; color: #374151; }
+    .quick-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        flex-wrap: wrap;
+    }
+    .quick-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .quick-action.primary {
+        background: var(--primary);
+        color: #fff;
+    }
+    .quick-action.primary:hover { background: var(--primary-hover); color: #fff; }
+    .quick-action.outline {
+        background: #fff;
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+    }
+    .quick-action.outline:hover { background: #F8FAFC; }
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-secondary);
+    }
+    .empty-state .bi { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; opacity: 0.4; }
+    .empty-state p { margin: 0; font-size: 0.85rem; }
+    @media (max-width: 900px) {
+        .charts-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+        .stat-cards { grid-template-columns: 1fr 1fr; }
+        .recent-table { overflow-x: auto; }
+        .recent-table table { min-width: 600px; }
+    }
+</style>
+
+<div class="dashboard-grid">
+
+    {# ===== STAT CARDS ===== #}
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-icon primary"><i class="bi bi-people"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Total Employees</div>
+                <div class="stat-value">{{ total_users }}</div>
+                <div class="stat-sub">Active accounts</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon info"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Total Applications</div>
+                <div class="stat-value">{{ total_applications }}</div>
+                <div class="stat-sub">All time</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon warning"><i class="bi bi-clock"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Pending Review</div>
+                <div class="stat-value">{{ pending }}</div>
+                <div class="stat-sub">Awaiting action</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon success"><i class="bi bi-graph-up-arrow"></i></div>
+            <div class="stat-info">
+                <div class="stat-label">Approval Rate</div>
+                <div class="stat-value">{{ approval_rate }}%</div>
+                <div class="stat-sub">
+                    <span class="up">{{ approved }} approved</span> / {{ total_applications }} total
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# ===== CHARTS ROW ===== #}
+    <div class="charts-row">
+        <div class="chart-card">
+            <h3><i class="bi bi-pie-chart"></i> Applications by Status</h3>
+            <div class="chart-container">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+        <div class="chart-card">
+            <h3><i class="bi bi-bar-chart"></i> Applications by Leave Type</h3>
+            <div class="chart-container">
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    {# ===== RECENT APPLICATIONS ===== #}
+    <div class="recent-table">
+        <div class="recent-table-header">
+            <h3><i class="bi bi-clock-history"></i> Recent Applications</h3>
+            <a href="{% url 'admin:users_leaveapplication_changelist' %}">View All <i class="bi bi-arrow-right"></i></a>
+        </div>
+        {% if recent_leaves %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Days</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in recent_leaves %}
+                <tr>
+                    <td>
+                        <a href="{% url 'admin:users_user_change' leave.user.id %}" style="color:var(--primary);text-decoration:none;font-weight:500;">
+                            {{ leave.user.get_full_name|default:leave.user.username }}
+                        </a>
+                    </td>
+                    <td>{{ leave.leave_type.name }}</td>
+                    <td>{{ leave.start_date|date:"M d, Y" }}</td>
+                    <td>{{ leave.end_date|date:"M d, Y" }}</td>
+                    <td>{{ leave.duration }}</td>
+                    <td><span class="status-badge {{ leave.status|lower }}">{{ leave.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <p>No leave applications yet.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    {# ===== QUICK ACTIONS ===== #}
+    <div class="quick-actions">
+        <a href="{% url 'admin:users_leaveapplication_changelist' %}" class="quick-action primary">
+            <i class="bi bi-file-earmark-text"></i> Manage Applications
+        </a>
+        <a href="{% url 'admin:users_user_changelist' %}" class="quick-action outline">
+            <i class="bi bi-people"></i> Manage Users
+        </a>
+        <a href="{% url 'admin:users_leavetype_changelist' %}" class="quick-action outline">
+            <i class="bi bi-tags"></i> Leave Types
+        </a>
+        <a href="/" class="quick-action outline" target="_blank">
+            <i class="bi bi-box-arrow-up-right"></i> User Portal
+        </a>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+    var statusColors = {
+        'Pending': '#F59E0B',
+        'Approved': '#10B981',
+        'Rejected': '#EF4444',
+        'Cancelled': '#9CA3AF'
+    };
+
+    var statusLabels = [];
+    var statusData = [];
+    var statusBg = [];
+    {% for item in by_status %}
+    statusLabels.push('{{ item.status }}');
+    statusData.push({{ item.count }});
+    statusBg.push(statusColors['{{ item.status }}'] || '#9CA3AF');
+    {% endfor %}
+
+    var ctx1 = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels.length ? statusLabels : ['No Data'],
+            datasets: [{
+                data: statusData.length ? statusData : [1],
+                backgroundColor: statusData.length ? statusBg : ['#E2E8F0'],
+                borderWidth: 2,
+                borderColor: '#fff',
+                hoverBorderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 16,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { family: 'Inter', size: 12, weight: '500' }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#1E293B',
+                    titleFont: { family: 'Inter', size: 12, weight: '600' },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    cornerRadius: 8,
+                    padding: 10,
+                    callbacks: {
+                        label: function(ctx) {
+                            return ' ' + ctx.label + ': ' + ctx.raw + ' application(s)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var typeLabels = [];
+    var typeData = [];
+    var typeBg = ['#4F46E5', '#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', '#EC4899', '#14B8A6', '#F59E0B'];
+    {% for item in by_type %}
+    typeLabels.push('{{ item.leave_type__name }}');
+    typeData.push({{ item.count }});
+    {% endfor %}
+
+    var ctx2 = document.getElementById('typeChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: typeLabels.length ? typeLabels : ['No Data'],
+            datasets: [{
+                data: typeData.length ? typeData : [0],
+                backgroundColor: typeData.length ? typeBg.slice(0, typeData.length) : ['#E2E8F0'],
+                borderRadius: 6,
+                borderSkipped: false,
+                barThickness: 32
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: { color: '#F1F5F9' },
+                    ticks: {
+                        font: { family: 'Inter', size: 11 },
+                        color: '#64748B',
+                        stepSize: 1
+                    }
+                },
+                y: {
+                    grid: { display: false },
+                    ticks: {
+                        font: { family: 'Inter', size: 12, weight: '500' },
+                        color: '#1E293B'
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1E293B',
+                    titleFont: { family: 'Inter', size: 12, weight: '600' },
+                    bodyFont: { family: 'Inter', size: 12 },
+                    cornerRadius: 8,
+                    padding: 10,
+                    callbacks: {
+                        label: function(ctx) {
+                            return ' ' + ctx.raw + ' application(s)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+})();
+</script>
+
+{% endblock %}

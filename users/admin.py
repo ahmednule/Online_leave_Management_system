@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.admin import AdminSite
 from django.utils.html import format_html
 from django.urls import reverse
+from django.db.models import Count, Q
+from django.shortcuts import render
 from datetime import datetime
 from .models import User, LeaveApplication, LeaveBalance, Notification, LeaveType, Profile, Awards, Notice, Employee_Details
 
@@ -12,6 +14,39 @@ class LMSAdminSite(AdminSite):
     site_header = 'Leave Management — Admin'
     site_title = 'LMS Admin'
     index_title = 'Dashboard'
+    index_template = 'admin/index.html'
+
+    def index(self, request, extra_context=None):
+        total_users = User.objects.filter(is_active=True).count()
+        total_applications = LeaveApplication.objects.count()
+        pending = LeaveApplication.objects.filter(status='Pending').count()
+        approved = LeaveApplication.objects.filter(status='Approved').count()
+        rejected = LeaveApplication.objects.filter(status='Rejected').count()
+        cancelled = LeaveApplication.objects.filter(status='Cancelled').count()
+        approval_rate = round((approved / total_applications * 100), 1) if total_applications > 0 else 0
+
+        by_status = list(LeaveApplication.objects.values('status').annotate(count=Count('id')).order_by('-count'))
+        by_type = list(LeaveApplication.objects.values('leave_type__name').annotate(count=Count('id')).order_by('-count'))
+
+        recent_leaves = LeaveApplication.objects.select_related('user', 'leave_type').order_by('-start_date')[:10]
+
+        context = {
+            **self.each_context(request),
+            'title': self.index_title,
+            'total_users': total_users,
+            'total_applications': total_applications,
+            'pending': pending,
+            'approved': approved,
+            'rejected': rejected,
+            'cancelled': cancelled,
+            'approval_rate': approval_rate,
+            'by_status': by_status,
+            'by_type': by_type,
+            'recent_leaves': recent_leaves,
+            'has_permission': True,
+        }
+        context.update(extra_context or {})
+        return render(request, self.index_template, context)
 
 
 admin_site = LMSAdminSite(name='lms_admin')
